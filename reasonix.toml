@@ -1,0 +1,2 @@
+[permissions]
+allow = ["Bash=try { $r = Invoke-WebRequest -Uri 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/One_of_the_waterways_in_Wuzhen_Ancient_Town.jpg/1280px-One_of_the_waterways_in_Wuzhen_Ancient_Town.jpg' -Method Head -UseBasicParsing -TimeoutSec 15; \"HTTP $($r.StatusCode) $($r.Headers['Content-Type']) $($r.Headers['Content-Length'])\" } catch { \"FAILED: $($_.Exception.Message)\" }"]

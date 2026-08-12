@@ -1,28 +1,1459 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="古镇主题网页：传说、特色与一日游攻略，带你走进夜色中的古镇。">
     <title>古镇</title>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         body {
-            background-color: #0a1a3a;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/One_of_the_waterways_in_Wuzhen_Ancient_Town.jpg/1280px-One_of_the_waterways_in_Wuzhen_Ancient_Town.jpg');
-            background-size: cover;
-            background-position: center;
+            background:
+                linear-gradient(180deg, rgba(10, 26, 58, 0.82) 0%, rgba(20, 32, 70, 0.78) 45%, rgba(40, 24, 55, 0.85) 100%),
+                url('images/guzhen-real.jpg') center center / cover no-repeat fixed;
             min-height: 100vh;
             margin: 0;
-            color: white;
+            padding: 90px 16px 60px;
+            color: #f0f4ff;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.8;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, #122a5e, #4a2a5f);
+            padding: 14px 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        .logo {
+            color: #ffd98a;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links a {
+            color: #f0f4ff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: color 0.3s, background 0.3s;
+        }
+        .nav-links a:hover {
+            color: #0a1a3a;
+            background: #ffd98a;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 30px 40px;
+            border-radius: 20px;
+            max-width: 620px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            text-align: left;
+        }
+        section {
+            scroll-margin-top: 80px;
+        }
+        h1, h2, h3 {
             text-align: center;
-            padding-top: 80px;
+        }
+        h1 {
+            font-size: 2.6em;
+            margin: 0.3em 0 0.2em;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s;
+        }
+        h1:hover {
+            transform: scale(1.05);
+        }
+        h2 {
+            color: #ffd98a;
+            margin-top: 1.6em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+        }
+        h3 {
+            color: #a8c6ff;
+        }
+        .tower-img {
+            display: block;
+            max-width: 340px;
+            width: 100%;
+            margin: 20px auto;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .tower-img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 32px rgba(255, 217, 138, 0.35);
+        }
+        a {
+            color: #7fd0ff;
+            transition: color 0.3s;
+        }
+        a:hover {
+            color: #ffd98a;
+            text-shadow: 0 0 8px rgba(255, 217, 138, 0.6);
+        }
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        .card {
+            flex: 1 1 130px;
+            max-width: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            transition: transform 0.3s, background 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-6px) scale(1.04);
+            background: rgba(255, 217, 138, 0.18);
+        }
+        .card-icon {
+            font-size: 34px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        ul li, ol li {
+            padding: 4px 8px;
+            margin: 4px 0;
+            border-radius: 8px;
+            transition: transform 0.25s, background 0.25s;
+        }
+        ul li:hover, ol li:hover {
+            background: rgba(255, 217, 138, 0.12);
+            transform: translateX(6px);
+        }
+        ul li::marker {
+            color: #ffd98a;
+        }
+        ol li::marker {
+            color: #ff9d6e;
+            font-weight: bold;
+        }
+        hr {
+            border: none;
+            border-top: 1px dashed #3a5a94;
+            margin: 2em 0;
+        }
+        button {
+            background: linear-gradient(90deg, #ff9d6e, #e8552d);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        button:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 16px rgba(255, 157, 110, 0.5);
+        }
+        #colorBox {
+            width: 100%;
+            max-width: 260px;
+            height: 90px;
+            border-radius: 15px;
+            background: #2a3f7f;
+            transition: background 0.5s;
+            margin: 10px 0;
+        }
+        #clock {
+            font-size: 20px;
+            color: #ffd98a;
+            margin: 6px 0;
+        }
+        #secret {
+            display: none;
+            margin-top: 10px;
+            padding: 16px 20px;
+            background: rgba(255, 217, 138, 0.12);
+            border-radius: 12px;
+            border: 1px dashed #ffd98a;
+        }
+        #monsterBox {
+            margin: 12px auto;
+            max-width: 380px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .arena {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+            margin-bottom: 12px;
+        }
+        .arena svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .hp-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 6px 0;
+            font-size: 14px;
+        }
+        .hp-name {
+            width: 74px;
+            text-align: right;
+            color: #a8c6ff;
+        }
+        .bar {
+            flex: 1;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 7px;
+            overflow: hidden;
+        }
+        .fill {
+            height: 100%;
+            width: 100%;
+            border-radius: 7px;
+            transition: width 0.4s;
+        }
+        .player-fill {
+            background: linear-gradient(90deg, #1a6e5a, #4ecdc4);
+        }
+        .monster-fill {
+            background: linear-gradient(90deg, #e8552d, #ff9d6e);
+        }
+        .hp-num {
+            width: 46px;
+            text-align: left;
+            color: #f0f4ff;
+            font-weight: bold;
+        }
+        .weapons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 12px 0;
+        }
+        .weapon-btn {
+            background: rgba(255, 255, 255, 0.12);
+            color: #f0f4ff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .weapon-btn:hover {
+            transform: scale(1.06);
+        }
+        .weapon-btn.active {
+            background: linear-gradient(90deg, #ff9d6e, #e8552d);
+            border-color: transparent;
+        }
+        #battleLog {
+            font-size: 14px;
+            color: #ffd98a;
+            margin: 10px 0 0;
+            min-height: 22px;
+        }
+        #fightRecord {
+            font-size: 14px;
+            color: #ffd98a;
+            margin: 6px 0 0;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(6px); }
+        }
+        #monster.hit {
+            animation: shake 0.35s;
+        }
+        .arena {
+            position: relative;
+        }
+        #fxLayer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .fx {
+            position: absolute;
+            font-size: 30px;
+            transform: translate(-50%, -50%);
+            animation: fxPop 0.6s forwards;
+        }
+        @keyframes fxPop {
+            0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+            30% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.8) translateY(-24px); opacity: 0; }
+        }
+        .star { animation: twinkle 2.5s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.15; } }
+        .firefly { animation: fly 5s ease-in-out infinite; }
+        @keyframes fly {
+            0% { transform: translate(0, 0); opacity: 0; }
+            20% { opacity: 0.9; }
+            50% { transform: translate(14px, -20px); opacity: 0.5; }
+            80% { opacity: 0.9; }
+            100% { transform: translate(-10px, 8px); opacity: 0; }
+        }
+        .fog { animation: fogDrift 9s ease-in-out infinite alternate; }
+        @keyframes fogDrift { from { transform: translateX(-14px); } to { transform: translateX(14px); } }
+        #fighter { transition: transform 0.15s; }
+        #fighter.jumping { animation: jumpUp 0.3s; }
+        @keyframes jumpUp {
+            0% { transform: translateY(0); }
+            30% { transform: translateY(-48px); }
+            60% { transform: translateY(-32px); }
+            100% { transform: translateY(0); }
+        }
+        #fighter.attacking { animation: lunge 0.28s; }
+        @keyframes lunge {
+            0% { transform: translateX(0); }
+            40% { transform: translateX(38px); }
+            100% { transform: translateX(0); }
+        }
+        #monster { transition: transform 0.15s; }
+        #monster.advance { animation: advanceAttack 0.6s; }
+        @keyframes advanceAttack {
+            0% { transform: translateX(0); }
+            40% { transform: translateX(-72px); }
+            60% { transform: translateX(-72px) translateY(-10px); }
+            100% { transform: translateX(0); }
+        }
+        #monster.knockback { animation: knockbackStep 0.4s forwards; }
+        @keyframes knockbackStep {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(28px); }
+        }
+        #fighter.hurt { animation: knockback 0.45s; }
+        @keyframes knockback {
+            0% { transform: translateX(0); opacity: 1; }
+            30% { transform: translateX(16px); opacity: 0.4; }
+            60% { transform: translateX(-6px); opacity: 1; }
+            100% { transform: translateX(0); }
+        }
+        .slash {
+            stroke-dasharray: 280;
+            stroke-dashoffset: 280;
+            animation: slashSwing 0.32s forwards;
+        }
+        @keyframes slashSwing {
+            60% { stroke-dashoffset: 0; opacity: 0.9; }
+            100% { stroke-dashoffset: 0; opacity: 0; }
+        }
+        .fireball {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            animation: fireFly 0.55s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes fireFly {
+            0% { left: 74%; top: var(--fy, 50%); opacity: 1; }
+            100% { left: 26%; top: calc(var(--fy, 50%) + 12%); opacity: 0.2; }
+        }
+        .action-buttons { display: flex; gap: 10px; justify-content: center; }
+        .card {
+            cursor: pointer;
+        }
+        .card.active {
+            background: rgba(255, 217, 138, 0.25);
+        }
+        .exp-panel {
+            display: none;
+            margin-top: 14px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 14px;
+            border: 1px dashed rgba(255, 217, 138, 0.35);
+            text-align: center;
+        }
+        .exp-title {
+            margin: 0 0 10px;
+            color: #ffd98a;
+            font-size: 15px;
+        }
+        .stone-row {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .stone {
+            width: 46px;
+            height: 34px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            transition: background 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .stone.lit {
+            background: linear-gradient(135deg, #ffd98a, #ff9d6e);
+            box-shadow: 0 0 14px rgba(255, 217, 138, 0.7);
+        }
+        .river {
+            position: relative;
+            height: 70px;
+            background: linear-gradient(180deg, #16305f, #0f2347);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .lantern-boat {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 20px;
+            white-space: nowrap;
+            background: rgba(255, 217, 138, 0.12);
+            border-radius: 20px;
+            padding: 3px 10px 3px 6px;
+            animation: floatAcross 5s linear forwards;
+        }
+        .boat-wish {
+            font-size: 12px;
+            color: #ffd98a;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .wish-input {
+            width: 80%;
+            max-width: 260px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 217, 138, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            color: #f0f4ff;
+            font-size: 14px;
+            margin-bottom: 8px;
+            outline: none;
+        }
+        .wish-input::placeholder {
+            color: #a8c6ff;
+        }
+        @keyframes floatAcross {
+            from { left: -8%; opacity: 0; }
+            10% { opacity: 1; }
+            to { left: 105%; opacity: 0; }
+        }
+        .lantern-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .lantern {
+            font-size: 30px;
+            cursor: pointer;
+            filter: grayscale(0.9) brightness(0.6);
+            transition: transform 0.3s, filter 0.3s;
+        }
+        .lantern:hover {
+            transform: scale(1.15);
+        }
+        .lantern.lit {
+            filter: none;
+            animation: lanternGlow 1s infinite alternate;
+        }
+        @keyframes lanternGlow {
+            from { text-shadow: 0 0 6px rgba(255, 157, 110, 0.6); }
+            to { text-shadow: 0 0 18px rgba(255, 157, 110, 1); }
+        }
+        #carving {
+            width: 100%;
+            max-width: 260px;
+        }
+        .carve-stroke {
+            stroke-dasharray: 300;
+            stroke-dashoffset: 300;
+        }
+        .carve-stroke.done {
+            animation: carveDraw 0.5s forwards;
+        }
+        @keyframes carveDraw {
+            to { stroke-dashoffset: 0; }
+        }
+        .tour-timeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: 14px 0;
+        }
+        .tour-dot {
+            width: 34px;
+            height: 34px;
+            line-height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            font-size: 16px;
+            transition: background 0.3s, border-color 0.3s, transform 0.3s;
+        }
+        .tour-dot.done {
+            background: rgba(255, 217, 138, 0.35);
+            border-color: #ffd98a;
+        }
+        .tour-dot.now {
+            border-color: #ffd98a;
+            transform: scale(1.15);
+            box-shadow: 0 0 12px rgba(255, 217, 138, 0.5);
+        }
+        .tour-line {
+            width: 26px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+        .tour-stage {
+            margin-top: 6px;
+        }
+        .fog-scene {
+            position: relative;
+            display: inline-block;
+            font-size: 64px;
+            margin: 10px 0;
+            line-height: 1;
+        }
+        .bridge-emoji {
+            display: block;
+        }
+        .fog-layer {
+            position: absolute;
+            inset: -6px;
+            background: linear-gradient(180deg, rgba(200, 215, 255, 0.85), rgba(200, 215, 255, 0.55));
+            border-radius: 12px;
+            transition: opacity 1.6s;
+        }
+        .fog-layer.clear {
+            opacity: 0;
+        }
+        .shop-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .shop {
+            padding: 14px 10px;
+            width: 90px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+        }
+        .shop:hover {
+            transform: translateY(-4px);
+        }
+        .shop.visited {
+            background: rgba(255, 217, 138, 0.25);
+        }
+        .wonton-wrap {
+            position: relative;
+            display: inline-block;
+            font-size: 56px;
+            margin: 10px 0;
+            line-height: 1;
+        }
+        .steam {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            width: 10px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.55);
+            border-radius: 50%;
+            opacity: 0;
+            transform: translateX(-50%);
+        }
+        .steam.on {
+            opacity: 1;
+            animation: steamUp 1.2s infinite;
+        }
+        @keyframes steamUp {
+            0% { transform: translate(-50%, 0) scale(0.7); opacity: 0; }
+            30% { opacity: 0.8; }
+            100% { transform: translate(-50%, -26px) scale(1.4); opacity: 0; }
+        }
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px dashed #3a5a94;
+            text-align: center;
+            color: #a8c6ff;
+            font-size: 14px;
+        }
+        footer ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            padding: 0;
+            margin: 0 0 10px;
+        }
+        footer a {
+            text-decoration: none;
+        }
+        @media (max-width: 560px) {
+            .navbar {
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px;
+            }
+            .container {
+                padding: 24px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>🏚️ 古镇</h1>
-    <p>欢迎，这里是古镇，古镇非常美丽。</p>
-    <h2>🏮 古镇的传说</h2>
-    <p>🌫️ 古镇深处，有一座废弃的古塔。传说塔里镇压着一头沉睡8000年的怪兽，千万不要靠近……</p>
-    <p>🕯️ 传说，午夜时古塔里会响起钟声。那声音，或许是怪兽翻身的声音。</p>
+    <nav class="navbar">
+        <div class="logo">🏚️ 古镇</div>
+        <ul class="nav-links">
+            <li><a href="#home">首页</a></li>
+            <li><a href="#legend">传说</a></li>
+            <li><a href="#features">特色</a></li>
+            <li><a href="#guide">攻略</a></li>
+            <li><a href="#magic">魔法</a></li>
+            <li><a href="#contact">联系</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+
+        <!-- 🎬 Hero 区域 -->
+        <section id="home">
+            <h1>🏚️ 古镇</h1>
+            <h2>🌟 欢迎来到古镇</h2>
+            <p>欢迎，这里是古镇，古镇非常美丽。青石板的老街、叮咚的河水、挂在屋檐下的红灯笼……</p>
+            <p>每一块砖瓦都藏着一个故事，今天就带你慢慢逛一逛。</p>
+            <img class="tower-img" src="images/ancient-tower.svg" alt="夜色中的古镇古塔，塔顶挂着红灯笼">
+        </section>
+
+        <hr>
+
+        <!-- 📖 传说 -->
+        <section id="legend">
+            <h2>🏮 古镇的传说</h2>
+            <p>🌫️ 古镇深处，有一座废弃的古塔。传说塔里镇压着一头沉睡8000年的怪兽，千万不要靠近……</p>
+            <p>🕯️ 传说，午夜时古塔里会响起钟声。那声音，或许是怪兽翻身的声音。</p>
+            <p>想听更多古镇的故事？
+                <a href="https://www.baidu.com/s?wd=%E5%8F%A4%E9%95%87" target="_blank">去网上搜索"古镇"</a>，
+                会打开一个新页面哦。
+            </p>
+            <h3>📖 关于古镇的小事</h3>
+            <p>古镇的每一条巷子都有自己的名字，比如"桂花巷""灯笼巷"。要是迷路了，就问问坐在门口的奶奶，她比地图还熟悉。</p>
+            <p>🕰️ 夜越深，古镇越安静。风从河面吹来，带一点点桂花香。</p>
+        </section>
+
+        <hr>
+
+        <!-- 🖼️ 特色（作品集式卡片） -->
+        <section id="features">
+            <h2>🌈 古镇特色 · 点一点，亲身体验</h2>
+            <div class="card-grid">
+                <div class="card" onclick="toggleExp('stone')">
+                    <span class="card-icon">🏘️</span>青石板老街
+                </div>
+                <div class="card" onclick="toggleExp('bridge')">
+                    <span class="card-icon">🌉</span>小桥流水
+                </div>
+                <div class="card" onclick="toggleExp('lantern')">
+                    <span class="card-icon">🏮</span>红灯笼夜巷
+                </div>
+                <div class="card" onclick="toggleExp('wood')">
+                    <span class="card-icon">🪵</span>木雕小铺
+                </div>
+            </div>
+
+            <div class="exp-panel" id="exp-stone">
+                <p class="exp-title">🦶 踩过青石板，把它们一块块点亮！</p>
+                <div class="stone-row" id="stoneRow"></div>
+                <p id="stoneCount">已点亮 0 / 10 块石板</p>
+            </div>
+
+            <div class="exp-panel" id="exp-bridge">
+                <p class="exp-title">🌉 在小桥边放一盏河灯，许个愿吧！</p>
+                <input id="wishInput" class="wish-input" type="text" maxlength="20" placeholder="写下你的心愿……">
+                <div class="river" id="river"></div>
+                <p><button onclick="launchLantern()">🏮 放河灯</button></p>
+            </div>
+
+            <div class="exp-panel" id="exp-lantern">
+                <p class="exp-title">🏮 一盏一盏，点亮夜巷的灯笼！</p>
+                <div class="lantern-row" id="lanternRow"></div>
+                <p id="lanternCount">已点亮 0 / 8 盏</p>
+            </div>
+
+            <div class="exp-panel" id="exp-wood">
+                <p class="exp-title">🪵 在老爷爷的木雕铺，一刀一刀刻出小鱼</p>
+                <svg id="carving" viewBox="0 0 220 130" aria-label="木雕小鱼">
+                    <path class="carve-stroke" id="carve1" d="M40 70 Q90 30 150 50 Q180 62 160 85 Q130 105 90 95 Q45 88 40 70 Z" stroke="#d9a05b" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <path class="carve-stroke" id="carve2" d="M150 55 Q180 40 195 60 L175 80 Q165 65 150 70" stroke="#d9a05b" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <path class="carve-stroke" id="carve3" d="M85 60 Q95 42 115 40 Q102 55 100 68" stroke="#d9a05b" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <circle class="carve-stroke" id="carve4" cx="95" cy="72" r="4" stroke="#d9a05b" stroke-width="3" fill="none"/>
+                </svg>
+                <p id="carveMsg">还差 4 刀……</p>
+                <p><button onclick="carveOnce()">🔨 刻一刀</button></p>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- 🗺️ 攻略 -->
+        <section id="guide">
+            <h2>🌟 古镇一日游攻略 · 跟着体验一天</h2>
+
+            <div class="tour-timeline" id="tourTimeline">
+                <span class="tour-dot now" id="dot0">🌅</span><span class="tour-line"></span>
+                <span class="tour-dot" id="dot1">🏘️</span><span class="tour-line"></span>
+                <span class="tour-dot" id="dot2">🍜</span><span class="tour-line"></span>
+                <span class="tour-dot" id="dot3">🏮</span>
+            </div>
+
+            <div class="tour-stage" id="tourStage">
+                <div class="tour-step" id="step0">
+                    <p class="exp-title">🌅 清晨 · 拨开晨雾看石拱桥</p>
+                    <div class="fog-scene">
+                        <span class="bridge-emoji">🌉</span>
+                        <div class="fog-layer" id="fogLayer"></div>
+                    </div>
+                    <p><button onclick="step0Action()">🌫️ 拨开晨雾</button></p>
+                </div>
+
+                <div class="tour-step" id="step1" style="display:none">
+                    <p class="exp-title">🏘️ 上午 · 逛老街手工艺铺</p>
+                    <div class="shop-row">
+                        <div class="shop" id="shop0" onclick="visitShop(0)">🪵<br>木雕铺</div>
+                        <div class="shop" id="shop1" onclick="visitShop(1)">🏮<br>灯笼铺</div>
+                        <div class="shop" id="shop2" onclick="visitShop(2)">🍭<br>糖画铺</div>
+                    </div>
+                    <p id="shopMsg">点开店铺进去逛逛（3 家都要逛）</p>
+                </div>
+
+                <div class="tour-step" id="step2" style="display:none">
+                    <p class="exp-title">🍜 中午 · 尝一碗小馄饨</p>
+                    <div class="wonton-wrap">
+                        <span class="steam" id="steam"></span>
+                        <span class="wonton-bowl" id="wontonBowl">🥟🍲</span>
+                    </div>
+                    <p id="wontonMsg">热气腾腾！先吹一吹，再开吃！</p>
+                    <p>
+                        <button onclick="wontonBlow()">🌬️ 吹一吹</button>
+                        <button onclick="wontonEat()">🥢 开吃</button>
+                    </p>
+                </div>
+
+                <div class="tour-step" id="step3" style="display:none">
+                    <p class="exp-title">🏮 傍晚 · 看红灯笼一盏盏亮起</p>
+                    <div class="lantern-row" id="eveLanternRow"></div>
+                    <p id="eveCount">点一点，把 5 盏灯笼全点亮</p>
+                </div>
+            </div>
+
+            <p id="tourLog">雾好大，石拱桥藏起来了……</p>
+        </section>
+
+        <hr>
+
+        <!-- ⚡ 互动魔法 -->
+        <section id="magic">
+            <h2>⚡ 古镇互动小魔法</h2>
+
+            <h3>🎨 第一招：点击变色</h3>
+            <p><button onclick="changeColor()">🎨 点我变渐变天色</button></p>
+            <div id="colorBox"></div>
+
+            <h3>🕰️ 第二招：实时时钟</h3>
+            <div id="clock">🕐 加载中...</div>
+
+            <h3>🗝️ 第三招：显示秘密</h3>
+            <p><button onclick="toggleSecret(this)">🗝️ 发现古镇秘密</button></p>
+            <div id="secret">
+                <p>🎉 秘密揭晓：塔里<strong>真的</strong>有怪兽！它被镇压了 8000 年，刚刚醒过来……</p>
+                <div id="monsterBox">
+                    <div class="arena">
+                        <svg id="arenaSvg" viewBox="0 0 400 260" role="img" aria-label="火柴人与怪兽的格斗场景">
+                            <defs>
+                                <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#0a1a3a"/>
+                                    <stop offset="70%" stop-color="#2a3f7f"/>
+                                    <stop offset="100%" stop-color="#4a2a5f"/>
+                                </linearGradient>
+                            </defs>
+                            <rect width="400" height="260" fill="url(#skyGrad)"/>
+                            <circle cx="332" cy="46" r="34" fill="#ffe9a8" opacity="0.15"/>
+                            <g fill="#ffffff">
+                                <circle class="star" cx="60" cy="40" r="1.6"/>
+                                <circle class="star" cx="140" cy="85" r="1.2"/>
+                                <circle class="star" cx="220" cy="30" r="1.8" style="animation-delay:0.8s"/>
+                                <circle class="star" cx="90" cy="130" r="1.2" style="animation-delay:1.4s"/>
+                                <circle class="star" cx="360" cy="140" r="1.4" style="animation-delay:0.4s"/>
+                                <circle class="star" cx="250" cy="60" r="1.3" style="animation-delay:1.9s"/>
+                            </g>
+                            <g fill="#ffd98a">
+                                <circle class="firefly" cx="150" cy="170" r="2.5"/>
+                                <circle class="firefly" cx="230" cy="150" r="2" style="animation-delay:1.2s"/>
+                                <circle class="firefly" cx="180" cy="195" r="2.2" style="animation-delay:2.3s"/>
+                                <circle class="firefly" cx="120" cy="150" r="1.8" style="animation-delay:0.6s"/>
+                            </g>
+                            <g fill="#ffe9a8" opacity="0.06">
+                                <circle cx="120" cy="215" r="50"/>
+                                <circle cx="290" cy="215" r="46"/>
+                            </g>
+                            <ellipse class="fog" cx="200" cy="238" rx="150" ry="12" fill="#a8c6ff" opacity="0.1"/>
+                            <ellipse class="fog" cx="120" cy="246" rx="110" ry="10" fill="#a8c6ff" opacity="0.08" style="animation-delay:2s"/>
+                            <rect x="0" y="222" width="400" height="38" fill="#12264d"/>
+                            <g fill="#16305f" opacity="0.6">
+                                <rect x="18" y="150" width="62" height="72"/>
+                                <polygon points="49,114 18,150 80,150"/>
+                            </g>
+                            <g fill="#16305f" opacity="0.45">
+                                <rect x="330" y="162" width="44" height="60"/>
+                                <polygon points="352,132 330,162 374,162"/>
+                            </g>
+                            <g id="fighter">
+                                <line id="kickLeg" x1="105" y1="132" x2="90" y2="182" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
+                                <line x1="105" y1="132" x2="120" y2="182" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
+                                <line x1="105" y1="94" x2="105" y2="132" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
+                                <line id="arm2" x1="105" y1="106" x2="84" y2="118" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
+                                <line id="arm" x1="105" y1="100" x2="132" y2="112" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
+                                <g id="weapon"></g>
+                                <circle cx="105" cy="80" r="14" fill="none" stroke="#f0f4ff" stroke-width="5"/>
+                                <g id="fighterFace"></g>
+                            </g>
+                            <g id="monster">
+                                <ellipse cx="300" cy="176" rx="42" ry="48" fill="#5a3a22" stroke="#e8552d" stroke-width="4"/>
+                                <circle cx="300" cy="96" r="30" fill="#5a3a22" stroke="#e8552d" stroke-width="4"/>
+                                <polygon points="281,71 291,46 301,71" fill="#e8552d"/>
+                                <polygon points="319,71 309,46 299,71" fill="#e8552d"/>
+                                <g id="monsterFace"></g>
+                                <line x1="263" y1="132" x2="246" y2="172" stroke="#e8552d" stroke-width="6" stroke-linecap="round"/>
+                                <line x1="337" y1="132" x2="354" y2="172" stroke="#e8552d" stroke-width="6" stroke-linecap="round"/>
+                                <line x1="284" y1="202" x2="270" y2="230" stroke="#e8552d" stroke-width="6" stroke-linecap="round"/>
+                                <line x1="316" y1="202" x2="330" y2="230" stroke="#e8552d" stroke-width="6" stroke-linecap="round"/>
+                            </g>
+                        </svg>
+                        <div id="fxLayer"></div>
+                    </div>
+
+                    <div class="hp-row">
+                        <span class="hp-name">🧍 小灯</span>
+                        <div class="bar"><div id="playerFill" class="fill player-fill"></div></div>
+                        <span class="hp-num" id="playerHpNum">12/12</span>
+                    </div>
+                    <div class="hp-row">
+                        <span class="hp-name">🐉 大胖</span>
+                        <div class="bar"><div id="monsterFill" class="fill monster-fill"></div></div>
+                        <span class="hp-num" id="monsterHpNum">30/30</span>
+                    </div>
+
+                    <div class="weapons">
+                        <button class="weapon-btn active" data-w="fist" onclick="selectWeapon('fist')">👊 拳头</button>
+                        <button class="weapon-btn" data-w="staff" onclick="selectWeapon('staff')">🪄 长棍</button>
+                        <button class="weapon-btn" data-w="sword" onclick="selectWeapon('sword')">🗡️ 长剑</button>
+                    </div>
+
+                    <p class="action-buttons">
+                        <button onclick="jump()">🦘 跳跃</button>
+                        <button onclick="battleAction()">⚔️ 开始战斗</button>
+                    </p>
+                    <p id="battleLog">🎯 选好武器，点击开始战斗！</p>
+                    <p id="fightRecord">🏆 胜利纪录：暂无</p>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- 📮 联系 -->
+        <section id="contact">
+            <h2>📮 联系我们</h2>
+            <p>想听更多古镇故事、或者来古镇做客？</p>
+            <p>📧 <a href="mailto:hello@guzhen.example.com">hello@guzhen.example.com</a></p>
+            <p>📍 古镇老街灯笼巷 3 号（找不到就问问门口晒太阳的奶奶）</p>
+        </section>
+
+    </main>
+
+    <!-- 🦶 页脚 -->
+    <footer>
+        <ul>
+            <li><a href="#home">首页</a></li>
+            <li><a href="#legend">传说</a></li>
+            <li><a href="#features">特色</a></li>
+            <li><a href="#guide">攻略</a></li>
+            <li><a href="#magic">魔法</a></li>
+            <li><a href="#contact">联系</a></li>
+        </ul>
+        <p>© 2024 古镇 · 用 HTML / CSS / JavaScript 亲手搭建</p>
+    </footer>
+
+    <script>
+        // 🎨 第一招：点击变色 —— 古镇的天空会变成不同的渐变色！
+        function changeColor() {
+            const gradients = [
+                ['#0a1a3a', '#ffd98a'],
+                ['#e8552d', '#4a2a5f'],
+                ['#4ecdc4', '#ff9d6e'],
+                ['#ff6b6b', '#1a3a6e'],
+                ['#96ceb4', '#e8552d']
+            ];
+            const box = document.getElementById('colorBox');
+            const g = gradients[Math.floor(Math.random() * gradients.length)];
+            box.style.background = 'linear-gradient(135deg, ' + g[0] + ', ' + g[1] + ')';
+        }
+
+        // 🕰️ 第二招：实时时钟 —— 古镇时间
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            document.getElementById('clock').innerText = '🕐 古镇时间 ' + time;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // 🗝️ 第三招：显示/隐藏秘密
+        function toggleSecret(btn) {
+            const secret = document.getElementById('secret');
+            if (secret.style.display === '' || secret.style.display === 'none') {
+                secret.style.display = 'block';
+                btn.textContent = '🙈 藏起秘密';
+            } else {
+                secret.style.display = 'none';
+                btn.textContent = '🗝️ 发现古镇秘密';
+            }
+        }
+
+        // 🥊 火柴人 vs 怪兽格斗！
+        const PLAYER_MAX = 12;
+        const MONSTER_MAX = 30;
+        let playerHp = PLAYER_MAX;
+        let monsterHp = MONSTER_MAX;
+        let currentWeapon = 'fist';
+        let gameOver = false;
+        let attacking = false;
+        let counterInterval = null;
+        let isJumping = false;
+        let counterSpeed = 2500;
+        let fireCount = 6;
+        let fightWins = 0;
+        try {
+            fightWins = parseInt(localStorage.getItem('fightWins') || '0');
+        } catch (e) {}
+        const WEAPONS = {
+            fist:  { name: '👊 拳头', dmg: 1 },
+            staff: { name: '🪄 长棍', dmg: 2 },
+            sword: { name: '🗡️ 长剑', dmg: 3 }
+        };
+
+        function log(msg) {
+            document.getElementById('battleLog').textContent = msg;
+        }
+
+        function spawnFX(text, x, y) {
+            const layer = document.getElementById('fxLayer');
+            const span = document.createElement('span');
+            span.className = 'fx';
+            span.textContent = text;
+            span.style.left = x + '%';
+            span.style.top = y + '%';
+            layer.appendChild(span);
+            setTimeout(() => span.remove(), 650);
+        }
+
+        // ⚔️ 剑光弧线：从小灯武器划到大胖身上
+        function spawnSlash() {
+            const svg = document.getElementById('arenaSvg');
+            const ns = 'http://www.w3.org/2000/svg';
+            const path = document.createElementNS(ns, 'path');
+            path.setAttribute('d', 'M140 100 Q215 52 288 108');
+            path.setAttribute('stroke', '#ffd98a');
+            path.setAttribute('stroke-width', '5');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('class', 'slash');
+            svg.appendChild(path);
+            setTimeout(() => path.remove(), 400);
+        }
+
+        // 🔥 大胖吐火：一串火焰从嘴里喷向小灯
+        function spawnFire() {
+            const layer = document.getElementById('fxLayer');
+            for (let i = 0; i < fireCount; i++) {
+                const f = document.createElement('span');
+                f.className = 'fireball';
+                f.textContent = '🔥';
+                f.style.setProperty('--fy', (44 + Math.random() * 10) + '%');
+                f.style.animationDelay = (i * 0.12) + 's';
+                f.style.fontSize = (16 + Math.random() * 14) + 'px';
+                layer.appendChild(f);
+                setTimeout(() => f.remove(), 1200);
+            }
+        }
+
+        function setWeaponGraphic(w) {
+            const g = document.getElementById('weapon');
+            g.innerHTML = '';
+            if (w === 'sword') {
+                g.innerHTML = '<line x1="132" y1="112" x2="150" y2="86" stroke="#c0c8d8" stroke-width="4" stroke-linecap="round"/>' +
+                              '<polygon points="150,86 144,78 158,80" fill="#c0c8d8"/>';
+            } else if (w === 'staff') {
+                g.innerHTML = '<line x1="132" y1="112" x2="162" y2="94" stroke="#8a5a2a" stroke-width="6" stroke-linecap="round"/>';
+            } else {
+                g.innerHTML = '<circle cx="132" cy="112" r="8" fill="#e8d8b0"/>' +
+                              '<circle cx="139" cy="105" r="4" fill="#e8d8b0"/>';
+            }
+        }
+
+        // 😊 小灯的表情
+        function setFighterFace(state) {
+            const F = {
+                normal: '<circle cx="99.5" cy="77" r="2.2" fill="#f0f4ff"/><circle cx="110.5" cy="77" r="2.2" fill="#f0f4ff"/><path d="M100 85 Q105 89.5 110 85" stroke="#f0f4ff" stroke-width="1.6" fill="none"/>',
+                angry: '<line x1="96" y1="74" x2="103" y2="80" stroke="#f0f4ff" stroke-width="1.8"/><line x1="114" y1="74" x2="107" y2="80" stroke="#f0f4ff" stroke-width="1.8"/><path d="M99 89 Q105 85 111 89" stroke="#f0f4ff" stroke-width="1.6" fill="none"/>',
+                hurt: '<line x1="97" y1="75" x2="103" y2="81" stroke="#f0f4ff" stroke-width="1.8"/><line x1="103" y1="75" x2="97" y2="81" stroke="#f0f4ff" stroke-width="1.8"/><line x1="107" y1="75" x2="113" y2="81" stroke="#f0f4ff" stroke-width="1.8"/><line x1="113" y1="75" x2="107" y2="81" stroke="#f0f4ff" stroke-width="1.8"/><path d="M99 90 Q105 83 111 90" stroke="#f0f4ff" stroke-width="1.6" fill="none"/>',
+                happy: '<path d="M97 76 Q100 72 103 76" stroke="#f0f4ff" stroke-width="1.8" fill="none"/><path d="M107 76 Q110 72 113 76" stroke="#f0f4ff" stroke-width="1.8" fill="none"/><path d="M98 85 Q105 94 112 85" stroke="#f0f4ff" stroke-width="1.8" fill="none"/>',
+                ooh: '<circle cx="99.5" cy="77" r="2.5" fill="#f0f4ff"/><circle cx="110.5" cy="77" r="2.5" fill="#f0f4ff"/><circle cx="105" cy="87" r="2.5" fill="none" stroke="#f0f4ff" stroke-width="1.6"/>'
+            };
+            document.getElementById('fighterFace').innerHTML = F[state] || F.normal;
+        }
+
+        // 😈 大胖的表情
+        function setMonsterFace(state) {
+            const M = {
+                normal: '<circle cx="290" cy="91" r="4" fill="#ffd98a"/><circle cx="310" cy="91" r="4" fill="#ffd98a"/><path d="M288 109 Q300 119 312 109" stroke="#ffd98a" stroke-width="3" fill="none"/>',
+                angry: '<line x1="283" y1="85" x2="295" y2="94" stroke="#ffd98a" stroke-width="3.5"/><line x1="317" y1="85" x2="305" y2="94" stroke="#ffd98a" stroke-width="3.5"/><path d="M284 112 Q300 125 316 112" stroke="#ffd98a" stroke-width="3" fill="none"/>',
+                hit: '<line x1="286" y1="87" x2="294" y2="95" stroke="#ffd98a" stroke-width="3.5"/><line x1="294" y1="87" x2="286" y2="95" stroke="#ffd98a" stroke-width="3.5"/><line x1="306" y1="87" x2="314" y2="95" stroke="#ffd98a" stroke-width="3.5"/><line x1="314" y1="87" x2="306" y2="95" stroke="#ffd98a" stroke-width="3.5"/><circle cx="300" cy="113" r="5" fill="none" stroke="#ffd98a" stroke-width="3"/>',
+                cry: '<path d="M286 89 Q290 85 294 89" stroke="#ffd98a" stroke-width="3" fill="none"/><path d="M306 89 Q310 85 314 89" stroke="#ffd98a" stroke-width="3" fill="none"/><path d="M289 112 Q300 103 311 112" stroke="#ffd98a" stroke-width="3" fill="none"/>',
+                happy: '<path d="M285 88 Q290 83 295 88" stroke="#ffd98a" stroke-width="3" fill="none"/><path d="M305 88 Q310 83 315 88" stroke="#ffd98a" stroke-width="3" fill="none"/><path d="M286 108 Q300 123 314 108" stroke="#ffd98a" stroke-width="3" fill="none"/>'
+            };
+            document.getElementById('monsterFace').innerHTML = M[state] || M.normal;
+        }
+
+        function selectWeapon(w) {
+            currentWeapon = w;
+            setWeaponGraphic(w);
+            document.querySelectorAll('.weapon-btn').forEach(b => b.classList.toggle('active', b.dataset.w === w));
+            log('🔧 换上了 ' + WEAPONS[w].name);
+        }
+
+        function jump() {
+            if (gameOver || isJumping) { return; }
+            isJumping = true;
+            const f = document.getElementById('fighter');
+            const arm = document.getElementById('arm');
+            const arm2 = document.getElementById('arm2');
+            f.classList.add('jumping');
+            setFighterFace('ooh');
+            arm.setAttribute('transform', 'rotate(-165 105 100)');
+            arm2.setAttribute('transform', 'rotate(140 105 106)');
+            spawnFX('💨', 26, 82);
+            log('🦘 小灯跳了起来！空中能躲火焰，还能飞踢大胖！');
+            setTimeout(() => {
+                f.classList.remove('jumping');
+                arm.setAttribute('transform', '');
+                arm2.setAttribute('transform', '');
+                setFighterFace('normal');
+                isJumping = false;
+            }, 320);
+        }
+
+        function updateBars() {
+            document.getElementById('playerFill').style.width = (playerHp / PLAYER_MAX * 100) + '%';
+            document.getElementById('monsterFill').style.width = (monsterHp / MONSTER_MAX * 100) + '%';
+            document.getElementById('playerHpNum').textContent = playerHp + '/' + PLAYER_MAX;
+            document.getElementById('monsterHpNum').textContent = monsterHp + '/' + MONSTER_MAX;
+        }
+
+        function battleAction() {
+            if (gameOver) {
+                startFight();
+            } else {
+                playerAttack();
+            }
+        }
+
+        function startCounter() {
+            if (counterInterval) { clearInterval(counterInterval); counterInterval = null; }
+            counterInterval = setInterval(() => {
+                if (gameOver) { return; }
+                if (isJumping) {
+                    spawnFire();
+                    log('🦘 小灯高高跳起，火焰从脚下飞过！');
+                    spawnFX('💨', 75, 50);
+                    return;
+                }
+                playerHp--;
+                updateBars();
+                document.getElementById('monster').classList.add('advance');
+                setMonsterFace('angry');
+                spawnFire();
+                setTimeout(() => {
+                    document.getElementById('monster').classList.remove('advance');
+                    setMonsterFace('normal');
+                }, 650);
+                document.getElementById('fighter').classList.add('hurt');
+                setFighterFace('hurt');
+                setTimeout(() => {
+                    document.getElementById('fighter').classList.remove('hurt');
+                    setFighterFace('normal');
+                }, 500);
+                spawnFX('🔥', 26, 50);
+                log('🔥 大胖吐火！小灯被火焰击中，掉了 1 点体力！');
+                if (playerHp <= 0) {
+                    endFight(false);
+                }
+            }, counterSpeed);
+        }
+
+        function startFight() {
+            playerHp = PLAYER_MAX;
+            monsterHp = MONSTER_MAX;
+            gameOver = false;
+            attacking = false;
+            counterSpeed = 2500;
+            fireCount = 6;
+            document.getElementById('monster').classList.remove('knockback');
+            updateBars();
+            setFighterFace('normal');
+            setMonsterFace('normal');
+            log('⚔️ 战斗开始！小灯 vs 大胖，用你的 ' + WEAPONS[currentWeapon].name + ' 打倒它！');
+            document.querySelector('#monsterBox button').textContent = '⚔️ 攻击！';
+            startCounter();
+        }
+
+        function playerAttack() {
+            if (gameOver || attacking) { return; }
+            if (isJumping) {
+                doKick();
+                return;
+            }
+            attacking = true;
+            const arm = document.getElementById('arm');
+            const arm2 = document.getElementById('arm2');
+            document.getElementById('fighter').classList.add('attacking');
+            setFighterFace('angry');
+            // 双手握剑，一起扬起
+            arm.setAttribute('transform', 'rotate(-150 105 100)');
+            arm2.setAttribute('transform', 'rotate(60 105 106)');
+            // 双手挥下：剑砍向怪兽 + 剑光弧线
+            setTimeout(() => {
+                arm.setAttribute('transform', 'rotate(-25 105 100)');
+                arm2.setAttribute('transform', 'rotate(15 105 106)');
+                spawnSlash();
+            }, 140);
+            setTimeout(() => {
+                const crit = Math.random() < 0.25;
+                const dmg = WEAPONS[currentWeapon].dmg + (crit ? 2 : 0);
+                monsterHp = Math.max(0, monsterHp - dmg);
+                updateBars();
+                document.getElementById('monster').classList.add('hit');
+                setMonsterFace('hit');
+                setTimeout(() => {
+                    document.getElementById('monster').classList.remove('hit');
+                    setMonsterFace('normal');
+                }, 450);
+                spawnFX(crit ? '✨💥' : '💥', 75, 50);
+                log('🗡️ ' + WEAPONS[currentWeapon].name + ' 砍中大胖！造成 ' + dmg + ' 点伤害' + (crit ? ' 💥暴击！' : ''));
+                arm.setAttribute('transform', '');
+                arm2.setAttribute('transform', '');
+                document.getElementById('fighter').classList.remove('attacking');
+                setFighterFace('normal');
+                attacking = false;
+                if (monsterHp <= 0) {
+                    endFight(true);
+                }
+            }, 300);
+        }
+
+        function doKick() {
+            const leg = document.getElementById('kickLeg');
+            const arm = document.getElementById('arm');
+            const arm2 = document.getElementById('arm2');
+            leg.setAttribute('transform', 'rotate(-125 105 132)');
+            arm.setAttribute('transform', 'rotate(-165 105 100)');
+            arm2.setAttribute('transform', 'rotate(140 105 106)');
+            document.getElementById('fighter').classList.add('attacking');
+            spawnFX('💨', 40, 70);
+            setTimeout(() => {
+                const crit = Math.random() < 0.25;
+                const dmg = 2 + (crit ? 2 : 0);
+                monsterHp = Math.max(0, monsterHp - dmg);
+                updateBars();
+                document.getElementById('monster').classList.add('knockback');
+                setMonsterFace('hit');
+                setTimeout(() => {
+                    document.getElementById('monster').classList.remove('knockback');
+                    setMonsterFace('normal');
+                }, 500);
+                spawnFX(crit ? '✨💥' : '💥', 70, 55);
+                spawnFX('🦵', 45, 62);
+                log('🦵 飞踢！正中大胖，造成 ' + dmg + ' 点伤害' + (crit ? ' 💥暴击！' : '') + '，大胖被踢退一步，气得吐火更快了！');
+                if (counterInterval) { clearInterval(counterInterval); counterInterval = null; }
+                counterSpeed = 1700;
+                fireCount = 9;
+                startCounter();
+                leg.setAttribute('transform', '');
+                arm.setAttribute('transform', '');
+                arm2.setAttribute('transform', '');
+                document.getElementById('fighter').classList.remove('attacking');
+                attacking = false;
+                if (monsterHp <= 0) {
+                    endFight(true);
+                }
+            }, 240);
+        }
+
+        function endFight(win) {
+            gameOver = true;
+            if (counterInterval) { clearInterval(counterInterval); counterInterval = null; }
+            if (win) {
+                fightWins++;
+                try { localStorage.setItem('fightWins', String(fightWins)); } catch (e) {}
+                document.getElementById('fightRecord').textContent = '🏆 胜利纪录：' + fightWins + ' 次';
+                setFighterFace('happy');
+                setMonsterFace('cry');
+                log('🎉 小灯赢了！大胖变成小猫咪：谢谢你陪我玩！');
+            } else {
+                setFighterFace('hurt');
+                setMonsterFace('happy');
+                log('😵 小灯被大胖打趴下了！大胖得意地说：还敢来塔里吗？');
+            }
+            document.querySelector('#monsterBox button').textContent = '🔁 再来一局';
+        }
+
+        setWeaponGraphic('fist');
+        setFighterFace('normal');
+        setMonsterFace('normal');
+        if (fightWins > 0) {
+            document.getElementById('fightRecord').textContent = '🏆 胜利纪录：' + fightWins + ' 次';
+        }
+        // 🏘️ 体验1：点亮青石板路
+        let stoneLit = 0;
+        const STONE_TOTAL = 10;
+        function initStone() {
+            const row = document.getElementById('stoneRow');
+            for (let i = 0; i < STONE_TOTAL; i++) {
+                const s = document.createElement('div');
+                s.className = 'stone';
+                s.addEventListener('click', () => lightStone(s));
+                s.addEventListener('mouseover', () => lightStone(s));
+                row.appendChild(s);
+            }
+        }
+        function lightStone(s) {
+            if (s.classList.contains('lit')) { return; }
+            s.classList.add('lit');
+            stoneLit++;
+            document.getElementById('stoneCount').textContent = '已点亮 ' + stoneLit + ' / ' + STONE_TOTAL + ' 块石板';
+            if (stoneLit === STONE_TOTAL) {
+                document.getElementById('stoneCount').textContent = '✨ 整条老街都亮了！走夜路不怕啦！';
+            }
+        }
+
+        // 🌉 体验2：放河灯（载着心愿）
+        function launchLantern() {
+            const river = document.getElementById('river');
+            const boat = document.createElement('div');
+            boat.className = 'lantern-boat';
+            const emoji = document.createElement('span');
+            emoji.className = 'boat-emoji';
+            emoji.textContent = '🛶';
+            const wish = document.createElement('span');
+            wish.className = 'boat-wish';
+            const input = document.getElementById('wishInput');
+            wish.textContent = input.value.trim() || '幸福平安';
+            const lamp = document.createElement('span');
+            lamp.className = 'boat-lamp';
+            lamp.textContent = '🏮';
+            boat.append(emoji, wish, lamp);
+            boat.style.top = (12 + Math.random() * 40) + 'px';
+            boat.style.animationDelay = (Math.random() * 0.5) + 's';
+            river.appendChild(boat);
+            input.value = '';
+            setTimeout(() => boat.remove(), 5500);
+        }
+
+        // 🏮 体验3：点亮灯笼
+        let lanternLit = 0;
+        const LANTERN_TOTAL = 8;
+        function initLantern() {
+            const row = document.getElementById('lanternRow');
+            for (let i = 0; i < LANTERN_TOTAL; i++) {
+                const l = document.createElement('span');
+                l.className = 'lantern';
+                l.textContent = '🏮';
+                l.addEventListener('click', () => lightLantern(l));
+                row.appendChild(l);
+            }
+        }
+        function lightLantern(l) {
+            if (l.classList.contains('lit')) { return; }
+            l.classList.add('lit');
+            lanternLit++;
+            document.getElementById('lanternCount').textContent = '已点亮 ' + lanternLit + ' / ' + LANTERN_TOTAL + ' 盏';
+            if (lanternLit === LANTERN_TOTAL) {
+                document.getElementById('lanternCount').textContent = '🏮✨ 夜巷全亮！灯笼们都在朝你笑！';
+            }
+        }
+
+        // 🪵 体验4：刻木雕
+        let carveCount = 0;
+        const CARVE_TOTAL = 4;
+        function carveOnce() {
+            if (carveCount >= CARVE_TOTAL) {
+                carveCount = 0;
+                for (let i = 1; i <= CARVE_TOTAL; i++) {
+                    document.getElementById('carve' + i).classList.remove('done');
+                }
+                document.getElementById('carveMsg').textContent = '再来一条！还差 ' + CARVE_TOTAL + ' 刀……';
+                return;
+            }
+            carveCount++;
+            document.getElementById('carve' + carveCount).classList.add('done');
+            if (carveCount === CARVE_TOTAL) {
+                document.getElementById('carveMsg').textContent = '🐟 小鱼木雕做好了！送给你！（点击按钮再来一条）';
+            } else {
+                document.getElementById('carveMsg').textContent = '还差 ' + (CARVE_TOTAL - carveCount) + ' 刀……';
+            }
+        }
+
+        // 🎚️ 切换体验面板
+        function toggleExp(id) {
+            document.querySelectorAll('.exp-panel').forEach(p => {
+                p.style.display = p.id === 'exp-' + id ? (p.style.display === 'block' ? 'none' : 'block') : 'none';
+            });
+            document.querySelectorAll('.card').forEach(c => {
+                c.classList.toggle('active', c.getAttribute('onclick') === "toggleExp('" + id + "')");
+            });
+        }
+
+        // 🌟 一日游攻略：跟着体验一天
+        let tourStage = 0;
+        let shopsVisited = 0;
+        const SHOP_MSGS = [
+            '🪵 木雕铺：老爷爷正在刻一条小鱼，刻刀沙沙响，木屑像雪花一样飘。',
+            '🏮 灯笼铺：挂满了红灯笼，老板说每一盏都画着不同的花纹。',
+            '🍭 糖画铺：糖画师傅手腕一抖，一条金龙在铁板上活了过来。'
+        ];
+        function showTourStage() {
+            for (let i = 0; i < 4; i++) {
+                document.getElementById('step' + i).style.display = i === tourStage ? 'block' : 'none';
+            }
+            for (let i = 0; i < 4; i++) {
+                const d = document.getElementById('dot' + i);
+                d.classList.toggle('done', i < tourStage);
+                d.classList.toggle('now', i === tourStage);
+            }
+        }
+        function nextTour() {
+            if (tourStage < 3) {
+                tourStage++;
+                showTourStage();
+            } else {
+                document.getElementById('tourTimeline').innerHTML = '<span class="tour-dot done" style="font-size:26px;width:44px;height:44px;line-height:40px">🌙</span>';
+                document.getElementById('tourStage').innerHTML =
+                    '<p class="exp-title" style="font-size:18px">🌙 古镇的夜很安静，一日游圆满结束！</p>';
+                document.getElementById('tourLog').textContent = '☁️ 明天清晨，薄雾还会升起，欢迎再来古镇做客！';
+            }
+        }
+        // 🌅 清晨：拨开晨雾看石桥
+        let fogCleared = false;
+        function step0Action() {
+            if (fogCleared) { return; }
+            fogCleared = true;
+            document.getElementById('fogLayer').classList.add('clear');
+            document.getElementById('tourLog').textContent = '🌉 雾气散开，石拱桥露出真容！';
+            setTimeout(nextTour, 1500);
+        }
+        // 🏘️ 上午：逛手工艺铺
+        function visitShop(i) {
+            const el = document.getElementById('shop' + i);
+            if (el.classList.contains('visited')) { return; }
+            el.classList.add('visited');
+            shopsVisited++;
+            document.getElementById('tourLog').textContent = SHOP_MSGS[i];
+            if (shopsVisited === 3) {
+                document.getElementById('shopMsg').textContent = '🏘️ 三家店铺都逛完啦！继续出发！';
+                setTimeout(nextTour, 1300);
+            }
+        }
+        // 🍜 中午：吃小馄饨
+        let wontonState = 0;
+        function wontonBlow() {
+            if (wontonState > 0) { return; }
+            wontonState = 1;
+            document.getElementById('steam').classList.add('on');
+            document.getElementById('wontonMsg').textContent = '🌬️ 吹一吹，热气飘散，馄饨不烫啦！';
+        }
+        function wontonEat() {
+            if (wontonState === 0) {
+                document.getElementById('wontonMsg').textContent = '🌡️ 太烫啦！先吹一吹！';
+                return;
+            }
+            if (wontonState === 2) { return; }
+            wontonState = 2;
+            document.getElementById('steam').classList.remove('on');
+            document.getElementById('wontonBowl').textContent = '🥣 一碗见底，心满意足！';
+            document.getElementById('tourLog').textContent = '🍜 小馄饨真香！心满意足，继续出发！';
+            setTimeout(nextTour, 1300);
+        }
+        // 🏮 傍晚：点亮灯笼，结束一天
+        let eveLit = 0;
+        function initEveLantern() {
+            const row = document.getElementById('eveLanternRow');
+            for (let i = 0; i < 5; i++) {
+                const l = document.createElement('span');
+                l.className = 'lantern';
+                l.textContent = '🏮';
+                l.addEventListener('click', () => {
+                    if (l.classList.contains('lit')) { return; }
+                    l.classList.add('lit');
+                    eveLit++;
+                    document.getElementById('eveCount').textContent = '已点亮 ' + eveLit + ' / 5 盏';
+                    if (eveLit === 5) {
+                        document.getElementById('eveCount').textContent = '🏮✨ 夜巷全亮，古镇的一天圆满结束！';
+                        setTimeout(nextTour, 1300);
+                    }
+                });
+                row.appendChild(l);
+            }
+        }
+        initStone();
+        initLantern();
+        initEveLantern();
+        showTourStage();
+    </script>
 </body>
 </html>
