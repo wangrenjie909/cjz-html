@@ -11,7 +11,7 @@
         }
         body {
             background:
-                linear-gradient(180deg, rgba(10, 26, 58, 0.82) 0%, rgba(20, 32, 70, 0.78) 45%, rgba(40, 24, 55, 0.85) 100%),
+                linear-gradient(180deg, rgba(10, 26, 58, 0.5) 0%, rgba(20, 32, 70, 0.45) 45%, rgba(40, 24, 55, 0.55) 100%),
                 url('images/guzhen-real.jpg') center center / cover no-repeat fixed;
             min-height: 100vh;
             margin: 0;
@@ -58,7 +58,7 @@
             background: #ffd98a;
         }
         .container {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.13);
             padding: 30px 40px;
             border-radius: 20px;
             max-width: 620px;
@@ -172,14 +172,10 @@
             transform: scale(1.06);
             box-shadow: 0 6px 16px rgba(255, 157, 110, 0.5);
         }
-        #colorBox {
-            width: 100%;
-            max-width: 260px;
-            height: 90px;
-            border-radius: 15px;
-            background: #2a3f7f;
-            transition: background 0.5s;
-            margin: 10px 0;
+        #skyNote {
+            font-size: 13px;
+            color: #a8c6ff;
+            margin: 4px 0 0;
         }
         #clock {
             font-size: 20px;
@@ -658,7 +654,7 @@
             <h2>🌟 欢迎来到古镇</h2>
             <p>欢迎，这里是古镇，古镇非常美丽。青石板的老街、叮咚的河水、挂在屋檐下的红灯笼……</p>
             <p>每一块砖瓦都藏着一个故事，今天就带你慢慢逛一逛。</p>
-            <img class="tower-img" src="images/ancient-tower.svg" alt="夜色中的古镇古塔，塔顶挂着红灯笼">
+            <img class="tower-img" src="images/guzhen-hero.jpg" alt="乌镇古镇夜景实景照片">
         </section>
 
         <hr>
@@ -791,9 +787,9 @@
         <section id="magic">
             <h2>⚡ 古镇互动小魔法</h2>
 
-            <h3>🎨 第一招：点击变色</h3>
-            <p><button onclick="changeColor()">🎨 点我变渐变天色</button></p>
-            <div id="colorBox"></div>
+            <h3>🎨 第一招：给古镇换天色</h3>
+            <p><button onclick="changeColor()">🎨 换一个天色</button></p>
+            <p id="skyNote">🎨 点一点，整个古镇的背景天色都会变，照片始终可见！</p>
 
             <h3>🕰️ 第二招：实时时钟</h3>
             <div id="clock">🕐 加载中...</div>
@@ -921,18 +917,24 @@
     </footer>
 
     <script>
-        // 🎨 第一招：点击变色 —— 古镇的天空会变成不同的渐变色！
+        // 🎨 第一招：给整个古镇换天色（背景图 + 渐变一起运行）
         function changeColor() {
-            const gradients = [
-                ['#0a1a3a', '#ffd98a'],
-                ['#e8552d', '#4a2a5f'],
-                ['#4ecdc4', '#ff9d6e'],
-                ['#ff6b6b', '#1a3a6e'],
-                ['#96ceb4', '#e8552d']
+            const skies = [
+                ['rgba(10, 26, 58, 0.5)', 'rgba(255, 217, 138, 0.45)'],
+                ['rgba(232, 85, 45, 0.45)', 'rgba(74, 42, 95, 0.55)'],
+                ['rgba(78, 205, 196, 0.45)', 'rgba(255, 157, 110, 0.5)'],
+                ['rgba(255, 107, 107, 0.45)', 'rgba(26, 58, 110, 0.55)'],
+                ['rgba(150, 206, 180, 0.45)', 'rgba(232, 85, 45, 0.5)'],
+                ['rgba(255, 148, 170, 0.45)', 'rgba(138, 74, 127, 0.5)'],
+                ['rgba(78, 205, 196, 0.4)', 'rgba(122, 92, 255, 0.5)'],
+                ['rgba(255, 157, 110, 0.45)', 'rgba(74, 42, 95, 0.55)'],
+                ['rgba(160, 190, 240, 0.4)', 'rgba(26, 58, 110, 0.5)'],
+                ['rgba(150, 210, 200, 0.4)', 'rgba(20, 32, 70, 0.5)']
             ];
-            const box = document.getElementById('colorBox');
-            const g = gradients[Math.floor(Math.random() * gradients.length)];
-            box.style.background = 'linear-gradient(135deg, ' + g[0] + ', ' + g[1] + ')';
+            const g = skies[Math.floor(Math.random() * skies.length)];
+            document.body.style.background =
+                'linear-gradient(180deg, ' + g[0] + ' 0%, ' + g[1] + ' 100%), ' +
+                "url('images/guzhen-real.jpg') center center / cover no-repeat fixed";
         }
 
         // 🕰️ 第二招：实时时钟 —— 古镇时间
