@@ -246,28 +246,6 @@
             color: #f0f4ff;
             font-weight: bold;
         }
-        .weapons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 12px 0;
-        }
-        .weapon-btn {
-            background: rgba(255, 255, 255, 0.12);
-            color: #f0f4ff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-        }
-        .weapon-btn:hover {
-            transform: scale(1.06);
-        }
-        .weapon-btn.active {
-            background: linear-gradient(90deg, #ff9d6e, #e8552d);
-            border-color: transparent;
-        }
         #battleLog {
             font-size: 14px;
             color: #ffd98a;
@@ -631,6 +609,104 @@
                 padding: 24px 20px;
             }
         }
+        /* ===== ⚔️ 元素大战·战斗系统 ===== */
+        .elements { display: flex; gap: 10px; justify-content: center; margin: 12px 0; flex-wrap: wrap; }
+        .ele-btn {
+            background: rgba(255, 255, 255, 0.1); color: #f0f4ff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 9px 14px; border-radius: 10px; cursor: pointer; font-size: 14px;
+            transition: transform .2s, box-shadow .2s, background .2s;
+        }
+        .ele-btn:hover { transform: translateY(-2px); }
+        .ele-btn.active { border-color: transparent; }
+        .ele-btn[data-ele="ice"].active { background: linear-gradient(135deg, #2a5aa8, #7fd0ff); box-shadow: 0 0 16px rgba(127, 208, 255, 0.65); }
+        .ele-btn[data-ele="fire"].active { background: linear-gradient(135deg, #c0392b, #ff9d6e); box-shadow: 0 0 16px rgba(255, 157, 110, 0.65); }
+        .ele-btn[data-ele="wood"].active { background: linear-gradient(135deg, #1e6b3a, #7ee0a0); box-shadow: 0 0 16px rgba(126, 224, 160, 0.65); }
+        .fight-hint { font-size: 12px; color: #a8c6ff; margin: 4px 0 8px; line-height: 1.7; }
+        .fight-hint b { color: #ffd98a; }
+        .move-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 8px 0; }
+        .move-btn {
+            background: rgba(255, 255, 255, 0.1); color: #f0f4ff;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            min-width: 44px; padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 15px; user-select: none;
+            -webkit-user-select: none; touch-action: manipulation;
+        }
+        .move-btn:active { transform: scale(0.92); }
+        .move-btn.skill { background: rgba(255, 217, 138, 0.14); border-color: rgba(255, 217, 138, 0.45); }
+        .skill-btn { position: relative; overflow: hidden; }
+        .cd-fill { position: absolute; left: 0; bottom: 0; height: 0%; width: 100%; background: rgba(10, 26, 58, 0.6); pointer-events: none; }
+        #skillCdText { font-size: 12px; color: #ffd98a; min-height: 16px; margin: 2px 0 6px; }
+        #comboTag { font-size: 15px; font-weight: bold; min-height: 20px; margin: 4px 0 0; text-shadow: 0 0 8px rgba(0, 0, 0, 0.7); }
+        /* 粒子 / 伤害数字 / 白闪 / 震动 */
+        .particle { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; animation: particleFly .6s ease-out forwards; }
+        @keyframes particleFly {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) translate(var(--dx, 0), var(--dy, 0)) scale(0.2); opacity: 0; }
+        }
+        .dmg-num { position: absolute; transform: translate(-50%, -50%); font-weight: bold; font-size: 17px; text-shadow: 0 0 6px rgba(0, 0, 0, 0.85); pointer-events: none; animation: dmgUp .9s ease-out forwards; white-space: nowrap; }
+        .dmg-num.big { font-size: 25px; }
+        @keyframes dmgUp {
+            0% { opacity: 0; transform: translate(-50%, -40%) scale(0.6); }
+            15% { opacity: 1; transform: translate(-50%, -60%) scale(1.15); }
+            100% { opacity: 0; transform: translate(-50%, -170%) scale(1); }
+        }
+        .hit-flash { animation: whiteFlash .22s; }
+        @keyframes whiteFlash { 0% { filter: brightness(3.4) saturate(0); } 100% { filter: brightness(1); } }
+        .arena.shake-hard { animation: arenaShake .32s; }
+        @keyframes arenaShake {
+            0%, 100% { transform: translate(0, 0); }
+            15% { transform: translate(-6px, 3px); } 30% { transform: translate(5px, -4px); }
+            45% { transform: translate(-4px, -2px); } 60% { transform: translate(4px, 3px); }
+            75% { transform: translate(-3px, 1px); }
+        }
+        /* 元素大招 */
+        .frost-ring { position: absolute; border: 3px solid #bfe3ff; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; animation: frostRing .5s ease-out forwards; box-shadow: 0 0 26px rgba(127, 208, 255, 0.9), inset 0 0 18px rgba(127, 208, 255, 0.5); }
+        @keyframes frostRing { 0% { width: 12px; height: 12px; opacity: 1; } 100% { width: 360px; height: 360px; opacity: 0; } }
+        .flame-pillar { position: absolute; width: 26px; border-radius: 10px; background: linear-gradient(180deg, #ffd98a, #ff9d6e 55%, rgba(232, 85, 45, 0)); transform: translate(-50%, -100%); pointer-events: none; animation: flameUp .45s ease-out forwards; }
+        @keyframes flameUp { 0% { height: 10px; opacity: 1; } 100% { height: 180px; opacity: 0; } }
+        .vine-path { pointer-events: none; stroke-dasharray: 220; stroke-dashoffset: 220; animation: vineGrow .45s forwards; }
+        @keyframes vineGrow { 55% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; opacity: 0.35; } }
+        /* Boss 狂暴光环 / 咆哮 */
+        #bossAura { opacity: 0; transition: opacity .5s; pointer-events: none; }
+        #bossAura.on { opacity: 1; animation: auraPulse .8s ease-in-out infinite; }
+        @keyframes auraPulse { 0%, 100% { opacity: .5; } 50% { opacity: .95; } }
+        .boss-roar { animation: bossRoar .55s; }
+        @keyframes bossRoar { 0% { transform: scale(1); } 30% { transform: scale(1.16); } 100% { transform: scale(1); } }
+        /* 冻结 / 缠绕 / 无敌闪烁 */
+        .frozen { filter: drop-shadow(0 0 8px #7fd0ff) brightness(1.2) hue-rotate(120deg); }
+        .vined { filter: drop-shadow(0 0 8px #7ee0a0) hue-rotate(60deg); }
+        #fighterMove.inv-blink { animation: invBlink .28s infinite; }
+        @keyframes invBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+        .minion { transition: filter .2s; }
+        .minion-bob { animation: minionBob 2.2s ease-in-out infinite; }
+        @keyframes minionBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        #startBtn {
+            background: linear-gradient(90deg, #ff9d6e, #e8552d); color: #fff;
+            border: none; padding: 10px 22px; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold;
+            box-shadow: 0 4px 14px rgba(232, 85, 45, 0.4); transition: transform .2s, box-shadow .2s;
+        }
+        #startBtn:hover { transform: scale(1.05); }
+        #startBtn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+        /* 升级与回血 */
+        .xp-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 14px; }
+        .xp-fill { background: linear-gradient(90deg, #b8860b, #ffd98a); }
+        #playerAura { animation: auraPulse2 1.8s ease-in-out infinite; }
+        @keyframes auraPulse2 {
+            0%, 100% { transform: scale(1); opacity: .45; }
+            50% { transform: scale(1.14); opacity: .8; }
+        }
+        /* 普攻冲击环 */
+        .shock-ring { position: absolute; border: 2px solid var(--rc, #fff); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; animation: shockRing .35s ease-out forwards; }
+        @keyframes shockRing { 0% { width: 12px; height: 12px; opacity: .95; } 100% { width: 96px; height: 96px; opacity: 0; } }
+        /* 升级提示 */
+        #levelMsg { font-size: 14px; font-weight: bold; color: #ffd98a; min-height: 18px; margin: 4px 0 0; text-shadow: 0 0 8px rgba(255, 217, 138, 0.7); }
+        /* 大招施法动作：身体发功放大 + 发光 */
+        #fighter.ult-cast { animation: ultCast .52s ease-in-out; }
+        @keyframes ultCast {
+            0% { transform: scale(1); filter: none; }
+            40% { transform: scale(1.16); filter: brightness(1.7); }
+            100% { transform: scale(1); filter: none; }
+        }
     </style>
 </head>
 <body>
@@ -807,6 +883,11 @@
                                     <stop offset="70%" stop-color="#2a3f7f"/>
                                     <stop offset="100%" stop-color="#4a2a5f"/>
                                 </linearGradient>
+                                <radialGradient id="auraGrad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#ff5a3c" stop-opacity="0.4"/>
+                                    <stop offset="70%" stop-color="#ff5a3c" stop-opacity="0.14"/>
+                                    <stop offset="100%" stop-color="#ff5a3c" stop-opacity="0"/>
+                                </radialGradient>
                             </defs>
                             <rect width="400" height="260" fill="url(#skyGrad)"/>
                             <circle cx="332" cy="46" r="34" fill="#ffe9a8" opacity="0.15"/>
@@ -839,9 +920,11 @@
                                 <rect x="330" y="162" width="44" height="60"/>
                                 <polygon points="352,132 330,162 374,162"/>
                             </g>
+                            <g id="fighterMove">
                             <g id="fighter">
+                                <ellipse id="playerAura" cx="105" cy="198" rx="30" ry="9" fill="#7fd0ff" opacity="0.45"/>
                                 <line id="kickLeg" x1="105" y1="132" x2="90" y2="182" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
-                                <line x1="105" y1="132" x2="120" y2="182" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
+                                <line id="leg2" x1="105" y1="132" x2="120" y2="182" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
                                 <line x1="105" y1="94" x2="105" y2="132" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
                                 <line id="arm2" x1="105" y1="106" x2="84" y2="118" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
                                 <line id="arm" x1="105" y1="100" x2="132" y2="112" stroke="#f0f4ff" stroke-width="5" stroke-linecap="round"/>
@@ -849,43 +932,126 @@
                                 <circle cx="105" cy="80" r="14" fill="none" stroke="#f0f4ff" stroke-width="5"/>
                                 <g id="fighterFace"></g>
                             </g>
+                            </g>
+                            <g id="bossMove">
                             <g id="monster">
-                                <ellipse cx="300" cy="176" rx="42" ry="48" fill="#5a3a22" stroke="#e8552d" stroke-width="4"/>
-                                <circle cx="300" cy="96" r="30" fill="#5a3a22" stroke="#e8552d" stroke-width="4"/>
-                                <polygon points="281,71 291,46 301,71" fill="#e8552d"/>
-                                <polygon points="319,71 309,46 299,71" fill="#e8552d"/>
+                                <!-- 狂暴光环 -->
+                                <g id="bossAura">
+                                    <circle cx="300" cy="140" r="92" fill="url(#auraGrad)"/>
+                                    <text x="300" y="136" text-anchor="middle" fill="#ff5a3c" font-size="15" font-weight="bold" letter-spacing="3" style="font-family:'Microsoft YaHei',sans-serif">狂 暴</text>
+                                </g>
+                                <!-- 镇塔魔尊：深红黑 大角 裂痕 -->
+                                <ellipse cx="300" cy="178" rx="52" ry="58" fill="#4a1212" stroke="#ff5a3c" stroke-width="4"/>
+                                <ellipse cx="300" cy="180" rx="40" ry="44" fill="#5c1a1a"/>
+                                <path d="M250 150 Q230 136 238 114 Q254 126 264 132 Z" fill="#22242a" stroke="#ff5a3c" stroke-width="2"/>
+                                <path d="M350 150 Q370 136 362 114 Q346 126 336 132 Z" fill="#22242a" stroke="#ff5a3c" stroke-width="2"/>
+                                <circle cx="300" cy="92" r="34" fill="#4a1212" stroke="#ff5a3c" stroke-width="4"/>
+                                <polygon points="270,68 254,30 282,56" fill="#e8d8b0" stroke="#a87a3a" stroke-width="2"/>
+                                <polygon points="330,68 346,30 318,56" fill="#e8d8b0" stroke="#a87a3a" stroke-width="2"/>
+                                <path d="M300 58 L295 76 L305 88 L298 106" stroke="#ff5a3c" stroke-width="2" fill="none" opacity="0.7"/>
                                 <g id="monsterFace"></g>
-                                <line x1="263" y1="132" x2="246" y2="172" stroke="#e8552d" stroke-width="6" stroke-linecap="round"/>
-                                <line x1="337" y1="132" x2="354" y2="172" stroke="#e8552d" stroke-width="6" stroke-linecap="round"/>
-                                <line x1="284" y1="202" x2="270" y2="230" stroke="#e8552d" stroke-width="6" stroke-linecap="round"/>
-                                <line x1="316" y1="202" x2="330" y2="230" stroke="#e8552d" stroke-width="6" stroke-linecap="round"/>
+                                <line id="bossArmL" x1="256" y1="134" x2="236" y2="178" stroke="#ff5a3c" stroke-width="8" stroke-linecap="round"/>
+                                <line id="bossArmR" x1="344" y1="134" x2="364" y2="178" stroke="#ff5a3c" stroke-width="8" stroke-linecap="round"/>
+                                <line id="bossLegL" x1="280" y1="214" x2="262" y2="246" stroke="#ff5a3c" stroke-width="8" stroke-linecap="round"/>
+                                <line id="bossLegR" x1="320" y1="214" x2="338" y2="246" stroke="#ff5a3c" stroke-width="8" stroke-linecap="round"/>
+                            </g>
+                            </g>
+                            <!-- 岩甲兽小怪 ×3 -->
+                            <g id="minionGroup">
+                                <g class="minion" id="minion0" transform="translate(248 0)">
+                                    <g class="minion-bob" style="animation-delay:.15s">
+                                        <ellipse cx="0" cy="196" rx="22" ry="26" fill="#5f6066" stroke="#9a9aa4" stroke-width="3"/>
+                                        <circle cx="0" cy="162" r="15" fill="#5f6066" stroke="#9a9aa4" stroke-width="3"/>
+                                        <polygon points="-8,152 -5,136 0,152" fill="#9a9aa4"/>
+                                        <polygon points="8,152 5,136 0,152" fill="#9a9aa4"/>
+                                        <g class="minion-face">
+                                            <circle cx="-6" cy="159" r="2.6" fill="#ff6b4a"/>
+                                            <circle cx="6" cy="159" r="2.6" fill="#ff6b4a"/>
+                                            <line x1="-8" y1="169" x2="8" y2="169" stroke="#ff6b4a" stroke-width="2.4" stroke-linecap="round"/>
+                                        </g>
+                                        <line class="minion-leg-l" x1="-15" y1="192" x2="-26" y2="218" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                        <line class="minion-leg-r" x1="15" y1="192" x2="26" y2="218" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                        <line x1="-8" y1="213" x2="-16" y2="232" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                        <line x1="8" y1="213" x2="16" y2="232" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                    </g>
+                                </g>
+                                <g class="minion" id="minion1" transform="translate(296 0)">
+                                    <g class="minion-bob" style="animation-delay:.6s">
+                                        <ellipse cx="0" cy="196" rx="22" ry="26" fill="#5f6066" stroke="#9a9aa4" stroke-width="3"/>
+                                        <circle cx="0" cy="162" r="15" fill="#5f6066" stroke="#9a9aa4" stroke-width="3"/>
+                                        <polygon points="-8,152 -5,136 0,152" fill="#9a9aa4"/>
+                                        <polygon points="8,152 5,136 0,152" fill="#9a9aa4"/>
+                                        <g class="minion-face">
+                                            <circle cx="-6" cy="159" r="2.6" fill="#ff6b4a"/>
+                                            <circle cx="6" cy="159" r="2.6" fill="#ff6b4a"/>
+                                            <line x1="-8" y1="169" x2="8" y2="169" stroke="#ff6b4a" stroke-width="2.4" stroke-linecap="round"/>
+                                        </g>
+                                        <line class="minion-leg-l" x1="-15" y1="192" x2="-26" y2="218" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                        <line class="minion-leg-r" x1="15" y1="192" x2="26" y2="218" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                        <line x1="-8" y1="213" x2="-16" y2="232" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                        <line x1="8" y1="213" x2="16" y2="232" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                    </g>
+                                </g>
+                                <g class="minion" id="minion2" transform="translate(344 0)">
+                                    <g class="minion-bob" style="animation-delay:1s">
+                                        <ellipse cx="0" cy="196" rx="22" ry="26" fill="#5f6066" stroke="#9a9aa4" stroke-width="3"/>
+                                        <circle cx="0" cy="162" r="15" fill="#5f6066" stroke="#9a9aa4" stroke-width="3"/>
+                                        <polygon points="-8,152 -5,136 0,152" fill="#9a9aa4"/>
+                                        <polygon points="8,152 5,136 0,152" fill="#9a9aa4"/>
+                                        <g class="minion-face">
+                                            <circle cx="-6" cy="159" r="2.6" fill="#ff6b4a"/>
+                                            <circle cx="6" cy="159" r="2.6" fill="#ff6b4a"/>
+                                            <line x1="-8" y1="169" x2="8" y2="169" stroke="#ff6b4a" stroke-width="2.4" stroke-linecap="round"/>
+                                        </g>
+                                        <line class="minion-leg-l" x1="-15" y1="192" x2="-26" y2="218" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                        <line class="minion-leg-r" x1="15" y1="192" x2="26" y2="218" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                        <line x1="-8" y1="213" x2="-16" y2="232" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                        <line x1="8" y1="213" x2="16" y2="232" stroke="#9a9aa4" stroke-width="5" stroke-linecap="round"/>
+                                    </g>
+                                </g>
                             </g>
                         </svg>
                         <div id="fxLayer"></div>
                     </div>
 
                     <div class="hp-row">
-                        <span class="hp-name">🧍 小灯</span>
+                        <span class="hp-name" id="playerName">🧍 战士</span>
                         <div class="bar"><div id="playerFill" class="fill player-fill"></div></div>
                         <span class="hp-num" id="playerHpNum">12/12</span>
                     </div>
-                    <div class="hp-row">
-                        <span class="hp-name">🐉 大胖</span>
+                    <div class="xp-row">
+                        <span class="hp-name" id="levelTag">Lv.1</span>
+                        <div class="bar"><div id="xpFill" class="fill xp-fill"></div></div>
+                        <span class="hp-num" id="xpNum">0/10</span>
+                    </div>
+                    <div class="hp-row" id="bossHpRow" style="display:none">
+                        <span class="hp-name">👹 镇塔魔尊</span>
                         <div class="bar"><div id="monsterFill" class="fill monster-fill"></div></div>
-                        <span class="hp-num" id="monsterHpNum">30/30</span>
+                        <span class="hp-num" id="monsterHpNum">60/60</span>
                     </div>
 
-                    <div class="weapons">
-                        <button class="weapon-btn active" data-w="fist" onclick="selectWeapon('fist')">👊 拳头</button>
-                        <button class="weapon-btn" data-w="staff" onclick="selectWeapon('staff')">🪄 长棍</button>
-                        <button class="weapon-btn" data-w="sword" onclick="selectWeapon('sword')">🗡️ 长剑</button>
+                    <div class="elements" id="eleSelect">
+                        <button class="ele-btn" data-ele="ice" onclick="selectEle('ice')">❄️ 冰灵·小凛</button>
+                        <button class="ele-btn" data-ele="fire" onclick="selectEle('fire')">🔥 火灵·小焱</button>
+                        <button class="ele-btn" data-ele="wood" onclick="selectEle('wood')">🌿 木灵·小森</button>
                     </div>
 
-                    <p class="action-buttons">
-                        <button onclick="jump()">🦘 跳跃</button>
-                        <button onclick="battleAction()">⚔️ 开始战斗</button>
-                    </p>
-                    <p id="battleLog">🎯 选好武器，点击开始战斗！</p>
+                    <p class="fight-hint"><b>键盘：</b>←→ / A D 跑动 · W / 空格 跳跃 · J 普攻（空中=飞踢）· K 大招<br>
+                    <b>大招：</b>❄️ 冰霜新星（冻结全场）· 🔥 烈焰冲击（灼烧）· 🌿 自然之怒（缠绕+回血）</p>
+
+                    <div class="move-row">
+                        <button class="move-btn" onmousedown="holdMove(-1)" onmouseup="holdMove(0)" onmouseleave="holdMove(0)" ontouchstart="holdMove(-1)" ontouchend="holdMove(0)">◀</button>
+                        <button class="move-btn" onmousedown="holdMove(1)" onmouseup="holdMove(0)" onmouseleave="holdMove(0)" ontouchstart="holdMove(1)" ontouchend="holdMove(0)">▶</button>
+                        <button class="move-btn" onclick="doJump()">⬆ 跳</button>
+                        <button class="move-btn skill" onclick="doAttack()">⚔ 攻</button>
+                        <button class="move-btn skill skill-btn" id="ultBtn" onclick="doUlt()">✦ 大招</button>
+                    </div>
+                    <div id="skillCdText"></div>
+
+                    <p><button id="startBtn" onclick="battleAction()">⚔️ 开始战斗</button></p>
+                    <p id="battleLog">❄️🔥🌿 先选择你的元素战士，再点击开始战斗！</p>
+                    <p id="comboTag"></p>
+                    <p id="levelMsg"></p>
                     <p id="fightRecord">🏆 胜利纪录：暂无</p>
                 </div>
             </div>
@@ -959,87 +1125,145 @@
         }
 
         // 🥊 火柴人 vs 怪兽格斗！
+        // ⚔️❄️🔥🌿 元素大战：冰 / 火 / 木 —— 实时跑动格斗（Boss 战）
         const PLAYER_MAX = 12;
-        const MONSTER_MAX = 30;
-        let playerHp = PLAYER_MAX;
-        let monsterHp = MONSTER_MAX;
-        let currentWeapon = 'fist';
-        let gameOver = false;
-        let attacking = false;
-        let counterInterval = null;
-        let isJumping = false;
-        let counterSpeed = 2500;
-        let fireCount = 6;
-        let fightWins = 0;
-        try {
-            fightWins = parseInt(localStorage.getItem('fightWins') || '0');
-        } catch (e) {}
-        const WEAPONS = {
-            fist:  { name: '👊 拳头', dmg: 1 },
-            staff: { name: '🪄 长棍', dmg: 2 },
-            sword: { name: '🗡️ 长剑', dmg: 3 }
+        const BOSS_MAX = 60;
+        const ELEMENTS = {
+            ice: {
+                name: '冰灵·小凛', icon: '❄️', color: '#7fd0ff', dark: '#2a5aa8',
+                atk: 3, speed: 155,
+                skill: { name: '冰霜新星', dmg: 6, cd: 5, txt: '冻结所有敌人 2 秒！' }
+            },
+            fire: {
+                name: '火灵·小焱', icon: '🔥', color: '#ff9d6e', dark: '#c0392b',
+                atk: 3, speed: 155,
+                skill: { name: '烈焰冲击', dmg: 8, cd: 5, txt: '灼烧敌人，4 秒内持续掉血！' }
+            },
+            wood: {
+                name: '木灵·小森', icon: '🌿', color: '#7ee0a0', dark: '#1e6b3a',
+                atk: 3, speed: 155,
+                skill: { name: '自然之怒', dmg: 5, cd: 5, txt: '缠绕敌人 2 秒，并为自身回复 5 点体力！' }
+            }
         };
 
+        let ele = null;                 // 当前元素
+        let playerHp = PLAYER_MAX;
+        let playerX = 105;              // viewBox 坐标
+        let bossX = 300;
+        let gameOver = false;
+        let fighting = false;
+        let phase = 'idle';             // idle | minions | boss
+        let atkCd = 0, ultCd = 0, ultCdMax = 8, hurtInv = 0;
+        let isJumping = false, jumpT = 0;
+        let combo = 0, comboTimer = 0;
+        let minions = [];               // {i, x, hp, max, alive, cd, freeze}
+        let bossAI = null;              // {state, cd, chargeCd, chargeT, freeze, rage}
+        let keys = {}, touchMove = 0;
+        let rafId = null, lastT = 0;
+        let fightEpoch = 0;               // 战斗局号：防止旧特效/灼烧残留影响新一局
+        let level = 1, xp = 0, xpNeed = 10;   // 📈 升级系统
+        let maxHp = PLAYER_MAX;
+        let walkPhase = 0, bossWalkPhase = 0; // 🚶 行走关节动画相位
+        let attacking = false;
+        let casting = false;              // ✨ 大招施法动作中（手脚挥动，暂停走路摆动）
+        let fightWins = 0;
+        try { fightWins = parseInt(localStorage.getItem('fightWins') || '0'); } catch (e) {}
+
         function log(msg) {
-            document.getElementById('battleLog').textContent = msg;
+            const el = document.getElementById('battleLog');
+            if (el) { el.textContent = msg; }
         }
 
-        function spawnFX(text, x, y) {
+        function px(x, y) { return { x: (x / 400 * 100) + '%', y: (y / 260 * 100) + '%' }; }
+
+        // ✨ 粒子特效（纯色光点，非卡通）
+        function spawnParticles(x, y, color, count, spread) {
             const layer = document.getElementById('fxLayer');
-            const span = document.createElement('span');
-            span.className = 'fx';
-            span.textContent = text;
-            span.style.left = x + '%';
-            span.style.top = y + '%';
-            layer.appendChild(span);
-            setTimeout(() => span.remove(), 650);
-        }
-
-        // ⚔️ 剑光弧线：从小灯武器划到大胖身上
-        function spawnSlash() {
-            const svg = document.getElementById('arenaSvg');
-            const ns = 'http://www.w3.org/2000/svg';
-            const path = document.createElementNS(ns, 'path');
-            path.setAttribute('d', 'M140 100 Q215 52 288 108');
-            path.setAttribute('stroke', '#ffd98a');
-            path.setAttribute('stroke-width', '5');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke-linecap', 'round');
-            path.setAttribute('class', 'slash');
-            svg.appendChild(path);
-            setTimeout(() => path.remove(), 400);
-        }
-
-        // 🔥 大胖吐火：一串火焰从嘴里喷向小灯
-        function spawnFire() {
-            const layer = document.getElementById('fxLayer');
-            for (let i = 0; i < fireCount; i++) {
-                const f = document.createElement('span');
-                f.className = 'fireball';
-                f.textContent = '🔥';
-                f.style.setProperty('--fy', (44 + Math.random() * 10) + '%');
-                f.style.animationDelay = (i * 0.12) + 's';
-                f.style.fontSize = (16 + Math.random() * 14) + 'px';
-                layer.appendChild(f);
-                setTimeout(() => f.remove(), 1200);
+            if (!layer) { return; }
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('span');
+                p.className = 'particle';
+                const pos = px(x, y);
+                p.style.left = pos.x;
+                p.style.top = pos.y;
+                p.style.background = color;
+                p.style.width = (2.5 + Math.random() * 4) + 'px';
+                p.style.height = p.style.width;
+                p.style.setProperty('--dx', ((Math.random() * 2 - 1) * spread) + 'px');
+                p.style.setProperty('--dy', ((Math.random() * 2 - 1) * spread) + 'px');
+                layer.appendChild(p);
+                setTimeout(() => p.remove(), 700);
             }
         }
 
+        // 🔢 飘出的伤害数字
+        function spawnDmg(x, y, text, color, big) {
+            const layer = document.getElementById('fxLayer');
+            if (!layer) { return; }
+            const d = document.createElement('span');
+            d.className = 'dmg-num' + (big ? ' big' : '');
+            d.textContent = text;
+            d.style.color = color;
+            const pos = px(x, y + Math.random() * 16);
+            d.style.left = pos.x;
+            d.style.top = pos.y;
+            layer.appendChild(d);
+            setTimeout(() => d.remove(), 950);
+        }
+
+        // 📳 屏幕震动
+        function shake(strong) {
+            const arena = document.querySelector('.arena');
+            if (!arena) { return; }
+            arena.classList.remove('shake-hard');
+            void arena.offsetWidth;
+            arena.classList.add('shake-hard');
+            setTimeout(() => arena.classList.remove('shake-hard'), strong ? 340 : 320);
+        }
+
+        // ⚪ 受击白闪帧
+        function flash(el) {
+            if (!el) { return; }
+            el.classList.remove('hit-flash');
+            void el.getBoundingClientRect();
+            el.classList.add('hit-flash');
+            setTimeout(() => el.classList.remove('hit-flash'), 260);
+        }
+
+        function enemyTargets() {
+            const list = [];
+            minions.forEach(m => {
+                if (m.alive) { list.push({ kind: 'minion', i: m.i, x: m.x, el: document.getElementById('minion' + m.i) }); }
+            });
+            if (phase === 'boss') { list.push({ kind: 'boss', x: bossX, el: document.getElementById('monster') }); }
+            return list;
+        }
+
+        function nearestEnemy() {
+            const list = enemyTargets();
+            if (!list.length) { return null; }
+            return list.reduce((a, b) => Math.abs(a.x - playerX) < Math.abs(b.x - playerX) ? a : b);
+        }
+
+        // 🗡️ 元素武器图形
         function setWeaponGraphic(w) {
             const g = document.getElementById('weapon');
-            g.innerHTML = '';
-            if (w === 'sword') {
-                g.innerHTML = '<line x1="132" y1="112" x2="150" y2="86" stroke="#c0c8d8" stroke-width="4" stroke-linecap="round"/>' +
-                              '<polygon points="150,86 144,78 158,80" fill="#c0c8d8"/>';
-            } else if (w === 'staff') {
-                g.innerHTML = '<line x1="132" y1="112" x2="162" y2="94" stroke="#8a5a2a" stroke-width="6" stroke-linecap="round"/>';
+            if (!g) { return; }
+            if (w === 'ice') {
+                g.innerHTML = '<line x1="132" y1="112" x2="152" y2="86" stroke="#cfe8ff" stroke-width="4" stroke-linecap="round"/>' +
+                              '<polygon points="152,86 143,78 159,79" fill="#eaf6ff"/>';
+            } else if (w === 'fire') {
+                g.innerHTML = '<line x1="132" y1="112" x2="154" y2="88" stroke="#ff9d6e" stroke-width="5" stroke-linecap="round"/>' +
+                              '<path d="M146 98 q-9 -11 3 -24 q7 11 13 9 q-3 11 -16 15 Z" fill="#ffd98a"/>';
+            } else if (w === 'wood') {
+                g.innerHTML = '<path d="M132 112 q26 -8 36 -20" stroke="#7ee0a0" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+                              '<circle cx="168" cy="92" r="4" fill="#7ee0a0"/>';
             } else {
-                g.innerHTML = '<circle cx="132" cy="112" r="8" fill="#e8d8b0"/>' +
-                              '<circle cx="139" cy="105" r="4" fill="#e8d8b0"/>';
+                g.innerHTML = '<circle cx="132" cy="112" r="7" fill="#e8d8b0"/>';
             }
         }
 
-        // 😊 小灯的表情
+        // 😊 元素战士表情
         function setFighterFace(state) {
             const F = {
                 normal: '<circle cx="99.5" cy="77" r="2.2" fill="#f0f4ff"/><circle cx="110.5" cy="77" r="2.2" fill="#f0f4ff"/><path d="M100 85 Q105 89.5 110 85" stroke="#f0f4ff" stroke-width="1.6" fill="none"/>',
@@ -1048,211 +1272,769 @@
                 happy: '<path d="M97 76 Q100 72 103 76" stroke="#f0f4ff" stroke-width="1.8" fill="none"/><path d="M107 76 Q110 72 113 76" stroke="#f0f4ff" stroke-width="1.8" fill="none"/><path d="M98 85 Q105 94 112 85" stroke="#f0f4ff" stroke-width="1.8" fill="none"/>',
                 ooh: '<circle cx="99.5" cy="77" r="2.5" fill="#f0f4ff"/><circle cx="110.5" cy="77" r="2.5" fill="#f0f4ff"/><circle cx="105" cy="87" r="2.5" fill="none" stroke="#f0f4ff" stroke-width="1.6"/>'
             };
-            document.getElementById('fighterFace').innerHTML = F[state] || F.normal;
+            const el = document.getElementById('fighterFace');
+            if (el) { el.innerHTML = F[state] || F.normal; }
         }
 
-        // 😈 大胖的表情
+        // 👹 镇塔魔尊表情（红眼）
         function setMonsterFace(state) {
             const M = {
-                normal: '<circle cx="290" cy="91" r="4" fill="#ffd98a"/><circle cx="310" cy="91" r="4" fill="#ffd98a"/><path d="M288 109 Q300 119 312 109" stroke="#ffd98a" stroke-width="3" fill="none"/>',
-                angry: '<line x1="283" y1="85" x2="295" y2="94" stroke="#ffd98a" stroke-width="3.5"/><line x1="317" y1="85" x2="305" y2="94" stroke="#ffd98a" stroke-width="3.5"/><path d="M284 112 Q300 125 316 112" stroke="#ffd98a" stroke-width="3" fill="none"/>',
-                hit: '<line x1="286" y1="87" x2="294" y2="95" stroke="#ffd98a" stroke-width="3.5"/><line x1="294" y1="87" x2="286" y2="95" stroke="#ffd98a" stroke-width="3.5"/><line x1="306" y1="87" x2="314" y2="95" stroke="#ffd98a" stroke-width="3.5"/><line x1="314" y1="87" x2="306" y2="95" stroke="#ffd98a" stroke-width="3.5"/><circle cx="300" cy="113" r="5" fill="none" stroke="#ffd98a" stroke-width="3"/>',
-                cry: '<path d="M286 89 Q290 85 294 89" stroke="#ffd98a" stroke-width="3" fill="none"/><path d="M306 89 Q310 85 314 89" stroke="#ffd98a" stroke-width="3" fill="none"/><path d="M289 112 Q300 103 311 112" stroke="#ffd98a" stroke-width="3" fill="none"/>',
-                happy: '<path d="M285 88 Q290 83 295 88" stroke="#ffd98a" stroke-width="3" fill="none"/><path d="M305 88 Q310 83 315 88" stroke="#ffd98a" stroke-width="3" fill="none"/><path d="M286 108 Q300 123 314 108" stroke="#ffd98a" stroke-width="3" fill="none"/>'
+                normal: '<circle cx="290" cy="88" r="4.5" fill="#ff5a3c"/><circle cx="310" cy="88" r="4.5" fill="#ff5a3c"/><path d="M287 108 Q300 120 313 108" stroke="#ff5a3c" stroke-width="3.5" fill="none"/>',
+                angry: '<line x1="282" y1="82" x2="296" y2="92" stroke="#ff5a3c" stroke-width="4"/><line x1="318" y1="82" x2="304" y2="92" stroke="#ff5a3c" stroke-width="4"/><path d="M284 111 Q300 127 316 111" stroke="#ff5a3c" stroke-width="3.5" fill="none"/>',
+                hit: '<line x1="285" y1="84" x2="294" y2="93" stroke="#ff5a3c" stroke-width="4"/><line x1="294" y1="84" x2="285" y2="93" stroke="#ff5a3c" stroke-width="4"/><line x1="306" y1="84" x2="315" y2="93" stroke="#ff5a3c" stroke-width="4"/><line x1="315" y1="84" x2="306" y2="93" stroke="#ff5a3c" stroke-width="4"/><circle cx="300" cy="110" r="6" fill="none" stroke="#ff5a3c" stroke-width="3.5"/>',
+                cry: '<path d="M285 85 Q290 81 295 85" stroke="#ff5a3c" stroke-width="3.5" fill="none"/><path d="M305 85 Q310 81 315 85" stroke="#ff5a3c" stroke-width="3.5" fill="none"/><path d="M288 111 Q300 101 312 111" stroke="#ff5a3c" stroke-width="3.5" fill="none"/>',
+                happy: '<path d="M284 84 Q289 79 294 84" stroke="#ff5a3c" stroke-width="3.5" fill="none"/><path d="M306 84 Q311 79 316 84" stroke="#ff5a3c" stroke-width="3.5" fill="none"/><path d="M285 107 Q300 124 315 107" stroke="#ff5a3c" stroke-width="3.5" fill="none"/>'
             };
-            document.getElementById('monsterFace').innerHTML = M[state] || M.normal;
+            const el = document.getElementById('monsterFace');
+            if (el) { el.innerHTML = M[state] || M.normal; }
         }
 
-        function selectWeapon(w) {
-            currentWeapon = w;
-            setWeaponGraphic(w);
-            document.querySelectorAll('.weapon-btn').forEach(b => b.classList.toggle('active', b.dataset.w === w));
-            log('🔧 换上了 ' + WEAPONS[w].name);
+        // 🎨 火柴人换元素配色
+        function setFighterColor() {
+            if (!ele) { return; }
+            const E = ELEMENTS[ele];
+            const f = document.getElementById('fighter');
+            f.querySelectorAll('line, circle, polygon, path').forEach(n => {
+                if (n.closest('#weapon') || n.closest('#fighterFace')) { return; }
+                n.setAttribute('stroke', E.color);
+            });
+            // ✨ 元素光环 + 武器光效
+            const aura = document.getElementById('playerAura');
+            if (aura) { aura.setAttribute('fill', E.color); }
+            const weapon = document.getElementById('weapon');
+            if (weapon) { weapon.style.filter = 'drop-shadow(0 0 4px ' + E.color + ')'; }
         }
 
-        function jump() {
-            if (gameOver || isJumping) { return; }
+        function selectEle(id) {
+            ele = id;
+            document.querySelectorAll('.ele-btn').forEach(b => b.classList.toggle('active', b.dataset.ele === id));
+            const E = ELEMENTS[id];
+            document.getElementById('playerName').textContent = E.icon + ' ' + E.name;
+            setWeaponGraphic(id);
+            setFighterColor();
+            setFighterFace('normal');
+            log(E.icon + ' 你选择了 ' + E.name + '！武器已就位，点击开始战斗！');
+        }
+
+        function holdMove(dir) { touchMove = dir; }
+
+        function updatePlayer(dt) {
+            if (!ele) { return; }
+            const E = ELEMENTS[ele];
+            let dir = (keys.left ? -1 : 0) + (keys.right ? 1 : 0) + touchMove;
+            dir = Math.max(-1, Math.min(1, dir));
+            if (dir !== 0) {
+                playerX += dir * E.speed * dt;
+                playerX = Math.max(40, Math.min(340, playerX));
+                const move = document.getElementById('fighterMove');
+                if (dir < 0) {
+                    move.setAttribute('transform', 'translate(' + (playerX + 105) + ' 0) scale(-1 1)');
+                } else {
+                    move.setAttribute('transform', 'translate(' + (playerX - 105) + ' 0)');
+                }
+            }
+            // 🚶 走路关节动画：腿交替摆动，手臂反向摆动
+            const legL = document.getElementById('kickLeg');
+            const legR = document.getElementById('leg2');
+            const arm = document.getElementById('arm');
+            const arm2 = document.getElementById('arm2');
+            if (dir !== 0 && !isJumping && !attacking && !casting) {
+                walkPhase += dt * 11;
+                const s = Math.sin(walkPhase) * 16;
+                legL.setAttribute('transform', 'rotate(' + (-s) + ' 105 132)');
+                legR.setAttribute('transform', 'rotate(' + s + ' 105 132)');
+                arm.setAttribute('transform', 'rotate(' + (-s * 0.6) + ' 105 100)');
+                arm2.setAttribute('transform', 'rotate(' + (s * 0.6) + ' 105 106)');
+            } else if (!isJumping && !attacking && !casting) {
+                legL.setAttribute('transform', '');
+                legR.setAttribute('transform', '');
+                arm.setAttribute('transform', '');
+                arm2.setAttribute('transform', '');
+            }
+            if (isJumping) {
+                jumpT -= dt;
+                if (jumpT <= 0) {
+                    isJumping = false;
+                    const f = document.getElementById('fighter');
+                    f.classList.remove('jumping');
+                    document.getElementById('arm').setAttribute('transform', '');
+                    document.getElementById('arm2').setAttribute('transform', '');
+                    setFighterFace('normal');
+                }
+            }
+            if (atkCd > 0) { atkCd -= dt; }
+            if (ultCd > 0) { ultCd -= dt; updateUltUI(); }
+            if (hurtInv > 0) {
+                hurtInv -= dt;
+                if (hurtInv <= 0) {
+                    document.getElementById('fighterMove').classList.remove('inv-blink');
+                }
+            }
+            if (comboTimer > 0) {
+                comboTimer -= dt;
+                if (comboTimer <= 0) {
+                    combo = 0;
+                    const tag = document.getElementById('comboTag');
+                    tag.textContent = '';
+                    tag.style.color = '';
+                }
+            }
+        }
+
+        function doJump() {
+            if (gameOver || isJumping || !ele) { return; }
             isJumping = true;
+            jumpT = 0.55;
+            const f = document.getElementById('fighter');
+            f.classList.remove('jumping');
+            void f.getBoundingClientRect();
+            f.classList.add('jumping');
+            setFighterFace('ooh');
+            const E = ELEMENTS[ele];
+            spawnParticles(playerX, 200, E.color, 6, 40);
+        }
+
+        function updateComboUI() {
+            const tag = document.getElementById('comboTag');
+            if (combo > 1) {
+                tag.textContent = '🔥 COMBO ×' + combo;
+                tag.style.color = ELEMENTS[ele].color;
+            } else {
+                tag.textContent = '';
+            }
+        }
+
+        function updateUltUI() {
+            const txt = document.getElementById('skillCdText');
+            const btn = document.getElementById('ultBtn');
+            const fill = btn ? btn.querySelector('.cd-fill') : null;
+            if (ultCd > 0) {
+                txt.textContent = '✦ 大招冷却中 ' + ultCd.toFixed(1) + 's';
+                if (fill) { fill.style.height = ((1 - ultCd / ultCdMax) * 100) + '%'; }
+            } else {
+                txt.textContent = '✦ 大招就绪！按 K 释放';
+                if (fill) { fill.style.height = '0%'; }
+            }
+        }
+
+        function killMinion(m) {
+            m.alive = false;
+            document.getElementById('minion' + m.i).style.display = 'none';
+            spawnParticles(m.x, 180, '#9a9aa4', 16, 120);
+            // 💚 击杀回血 + 📈 经验
+            const heal = Math.min(2, maxHp - playerHp);
+            playerHp += heal;
+            if (heal > 0) { spawnDmg(playerX, 80, '+' + heal, '#7ee0a0', false); }
+            updateBars();
+            addXp(6);
+            if (phase === 'minions' && minions.every(x => !x.alive)) {
+                spawnBoss();
+            }
+        }
+
+        function damageEnemy(t, dmg, crit) {
+            if (t.kind === 'minion') {
+                const m = minions[t.i];
+                if (!m.alive) { return; }
+                m.hp -= dmg;
+                m.rageT = 0.9;              // ⚡ 受击后狂暴加速反击
+                if (m.hp <= 0) {
+                    killMinion(m);
+                    log('💀 岩甲兽倒下了！还剩 ' + minions.filter(x => x.alive).length + ' 只');
+                }
+            } else {
+                bossHp -= dmg;
+                if (bossHp > 0) { addXp(1); }   // 📈 击中 Boss 也涨经验
+                updateBars();
+                if (bossHp <= 0) {
+                    bossHp = 0;
+                    updateBars();
+                    endFight(true);
+                } else if (bossHp <= BOSS_MAX * 0.3 && bossAI && !bossAI.rage) {
+                    bossAI.rage = true;
+                    document.getElementById('bossAura').classList.add('on');
+                    shake(true);
+                    setMonsterFace('angry');
+                    log('🔥⚠️ 镇塔魔尊狂暴了！攻击变快，全身燃起怒火！');
+                }
+                // ⚡ 受击反击：怒气上涌，下一次吐息来得更快
+                if (bossAI && bossAI.state !== 'charge') {
+                    bossAI.cd = Math.max(0.3, (bossAI.cd || 0) - 0.35);
+                }
+            }
+        }
+
+        // ⚔️ 普攻
+        function doAttack() {
+            if (gameOver || atkCd > 0 || !ele || !fighting) { return; }
+            if (isJumping) { doKick(); return; }
+            attacking = true;
+            atkCd = 0.4;
+            const E = ELEMENTS[ele];
+            // 🏃 攻击突进：向最近敌人小步冲刺，普通攻击也能追上并命中怪兽
+            const t0 = nearestEnemy();
+            if (t0 && Math.abs(t0.x - playerX) <= 100) {
+                const dir = t0.x > playerX ? 1 : -1;
+                playerX += dir * 34;
+                playerX = Math.max(40, Math.min(340, playerX));
+                const move = document.getElementById('fighterMove');
+                if (dir < 0) {
+                    move.setAttribute('transform', 'translate(' + (playerX + 105) + ' 0) scale(-1 1)');
+                } else {
+                    move.setAttribute('transform', 'translate(' + (playerX - 105) + ' 0)');
+                }
+            }
             const f = document.getElementById('fighter');
             const arm = document.getElementById('arm');
             const arm2 = document.getElementById('arm2');
-            f.classList.add('jumping');
-            setFighterFace('ooh');
-            arm.setAttribute('transform', 'rotate(-165 105 100)');
-            arm2.setAttribute('transform', 'rotate(140 105 106)');
-            spawnFX('💨', 26, 82);
-            log('🦘 小灯跳了起来！空中能躲火焰，还能飞踢大胖！');
+            const weapon = document.getElementById('weapon');
+            f.classList.remove('attacking');
+            void f.getBoundingClientRect();
+            f.classList.add('attacking');
+            setFighterFace('angry');
+            arm.setAttribute('transform', 'rotate(-150 105 100)');
+            arm2.setAttribute('transform', 'rotate(60 105 106)');
+            weapon.setAttribute('transform', 'rotate(-70 132 112)');
+            const ep = fightEpoch;
             setTimeout(() => {
-                f.classList.remove('jumping');
+                if (gameOver || ep !== fightEpoch) { attacking = false; return; }
+                arm.setAttribute('transform', 'rotate(-25 105 100)');
+                arm2.setAttribute('transform', 'rotate(15 105 106)');
+                weapon.setAttribute('transform', 'rotate(30 132 112)');
+                const t = nearestEnemy();
+                if (t && Math.abs(t.x - playerX) < 72) {
+                    const crit = Math.random() < 0.25;
+                    const dmg = curAtk() + (crit ? 2 : 0);
+                    const dir = t.x > playerX ? 1 : -1;
+                    // ✨ 挥砍弧光：沿挥砍方向的一串粒子
+                    for (let i = 0; i < 5; i++) {
+                        spawnParticles(playerX + (14 + i * 12) * dir, 130 + i * 6, E.color, 3, 26);
+                    }
+                    spawnParticles(playerX + 42 * dir, 140, E.color, 10, 80);
+                    // 💥 命中冲击环
+                    const layer = document.getElementById('fxLayer');
+                    const ring = document.createElement('span');
+                    ring.className = 'shock-ring';
+                    ring.style.setProperty('--rc', E.color);
+                    const pos = px(t.x, 150);
+                    ring.style.left = pos.x;
+                    ring.style.top = pos.y;
+                    layer.appendChild(ring);
+                    setTimeout(() => ring.remove(), 380);
+                    spawnDmg(t.x, 150, '-' + dmg, E.color, crit);
+                    flash(t.el);
+                    shake(false);
+                    damageEnemy(t, dmg, crit);
+                    combo++;
+                    comboTimer = 2.5;
+                    updateComboUI();
+                    log('⚔️ 命中！造成 ' + dmg + ' 点伤害' + (crit ? ' 暴击！' : ''));
+                } else {
+                    spawnParticles(playerX + 30, 150, '#a8c6ff', 4, 40);
+                    log('💨 挥空了！敌人不在攻击范围内。');
+                }
                 arm.setAttribute('transform', '');
                 arm2.setAttribute('transform', '');
+                weapon.setAttribute('transform', '');
+                f.classList.remove('attacking');
                 setFighterFace('normal');
-                isJumping = false;
-            }, 320);
+                attacking = false;
+            }, 120);
         }
 
+        // 🦵 空中飞踢
+        function doKick() {
+            atkCd = 0.5;
+            const E = ELEMENTS[ele];
+            const leg = document.getElementById('kickLeg');
+            leg.setAttribute('transform', 'rotate(-125 105 132)');
+            const t = nearestEnemy();
+            if (t && Math.abs(t.x - playerX) < 72) {
+                const dmg = curAtk() + 1;
+                spawnParticles(playerX + 30, 170, E.color, 10, 80);
+                spawnDmg(t.x, 150, '-' + dmg, E.color, false);
+                flash(t.el);
+                shake(false);
+                damageEnemy(t, dmg, false);
+                combo++;
+                comboTimer = 2.5;
+                updateComboUI();
+                log('🦵 空中飞踢！造成 ' + dmg + ' 点伤害！');
+            } else {
+                log('🦵 飞踢落空！');
+            }
+            setTimeout(() => leg.setAttribute('transform', ''), 300);
+        }
+
+        // ✦ 元素大招
+        // ✨ 大招施法动作：手脚交替挥动（起手高举 → 挥臂爆发 → 蹬腿收势）
+        function ultAnim() {
+            const ep = fightEpoch;
+            const arm = document.getElementById('arm');
+            const arm2 = document.getElementById('arm2');
+            const legL = document.getElementById('kickLeg');
+            const legR = document.getElementById('leg2');
+            // ① 起手：双臂高举过头，抬腿蓄力
+            arm.setAttribute('transform', 'rotate(-165 105 100)');
+            arm2.setAttribute('transform', 'rotate(165 105 106)');
+            legL.setAttribute('transform', 'rotate(-30 105 132)');
+            legR.setAttribute('transform', 'rotate(-20 105 132)');
+            // ② 爆发：双臂大力挥向前方，后腿蹬地前踏
+            setTimeout(() => {
+                if (gameOver || ep !== fightEpoch) { return; }
+                arm.setAttribute('transform', 'rotate(-15 105 100)');
+                arm2.setAttribute('transform', 'rotate(0 105 106)');
+                legL.setAttribute('transform', 'rotate(-55 105 132)');
+                legR.setAttribute('transform', 'rotate(35 105 132)');
+            }, 170);
+            // ③ 二次挥动：换腿交替，增强节奏
+            setTimeout(() => {
+                if (gameOver || ep !== fightEpoch) { return; }
+                arm.setAttribute('transform', 'rotate(-120 105 100)');
+                arm2.setAttribute('transform', 'rotate(120 105 106)');
+                legL.setAttribute('transform', 'rotate(30 105 132)');
+                legR.setAttribute('transform', 'rotate(-40 105 132)');
+            }, 340);
+            // ④ 收势归位
+            setTimeout(() => {
+                if (gameOver || ep !== fightEpoch) { casting = false; return; }
+                arm.setAttribute('transform', '');
+                arm2.setAttribute('transform', '');
+                legL.setAttribute('transform', '');
+                legR.setAttribute('transform', '');
+                casting = false;
+            }, 520);
+        }
+
+        function doUlt() {
+            if (!ele || !fighting || gameOver) { return; }
+            if (ultCd > 0) { log('✦ 大招还在冷却中！'); return; }
+            const E = ELEMENTS[ele];
+            ultCd = E.skill.cd;
+            ultCdMax = E.skill.cd;
+            updateUltUI();
+            const t = nearestEnemy();
+            shake(true);
+            // ✨ 施法动作：手脚挥动 + 身体发功光效
+            casting = true;
+            ultAnim();
+            const fEl = document.getElementById('fighter');
+            fEl.classList.add('ult-cast');
+            setTimeout(() => fEl.classList.remove('ult-cast'), 560);
+
+            if (ele === 'ice') {
+                // ❄️ 冰霜新星：冰环扩散 + 全场冻结
+                const layer = document.getElementById('fxLayer');
+                const ring = document.createElement('span');
+                ring.className = 'frost-ring';
+                const pos = px(playerX, 130);
+                ring.style.left = pos.x;
+                ring.style.top = pos.y;
+                layer.appendChild(ring);
+                setTimeout(() => ring.remove(), 550);
+                spawnParticles(playerX, 130, '#bfe3ff', 36, 170);
+                enemyTargets().forEach(tgt => {
+                    if (tgt.kind === 'minion') {
+                        const m = minions[tgt.i];
+                        m.freeze = 2;
+                        tgt.el.classList.add('frozen');
+                        setTimeout(() => tgt.el.classList.remove('frozen'), 2000);
+                    } else {
+                        bossAI.freeze = 2;
+                        tgt.el.classList.add('frozen');
+                        setTimeout(() => tgt.el.classList.remove('frozen'), 2000);
+                    }
+                    damageEnemy(tgt, curSkillDmg(), true);
+                    spawnDmg(tgt.x, 130, '-' + curSkillDmg(), '#bfe3ff', true);
+                    flash(tgt.el);
+                });
+                log('❄️ 冰霜新星！冻结全场 2 秒，造成 ' + curSkillDmg() + ' 点伤害！');
+            } else if (ele === 'fire') {
+                // 🔥 烈焰冲击：火柱喷向敌人 + 灼烧
+                const dir = t ? (t.x > playerX ? 1 : -1) : 1;
+                const layer = document.getElementById('fxLayer');
+                for (let i = 0; i < 8; i++) {
+                    const fp = document.createElement('span');
+                    fp.className = 'flame-pillar';
+                    const fx = playerX + (26 + i * 15) * dir;
+                    if (fx < 25 || fx > 375) { fp.remove(); continue; }
+                    const pos = px(fx, 198);
+                    fp.style.left = pos.x;
+                    fp.style.top = pos.y;
+                    fp.style.animationDelay = (i * 0.05) + 's';
+                    layer.appendChild(fp);
+                    setTimeout(() => fp.remove(), 800);
+                }
+                spawnParticles(playerX + 55 * dir, 160, '#ff9d6e', 28, 140);
+                if (t) {
+                    damageEnemy(t, curSkillDmg(), true);
+                    spawnDmg(t.x, 140, '-' + curSkillDmg(), '#ff9d6e', true);
+                    flash(t.el);
+                    const ep = fightEpoch;
+                    for (let k = 1; k <= 4; k++) {
+                        setTimeout(() => {
+                            if (gameOver || ep !== fightEpoch) { return; }
+                            const alive = t.kind === 'minion' ? minions[t.i].alive : (phase === 'boss');
+                            if (!alive) { return; }
+                            if (t.kind === 'minion') {
+                                const m = minions[t.i];
+                                m.hp -= 1;
+                                if (m.hp <= 0) { killMinion(m); }
+                            } else {
+                                bossHp = Math.max(0, bossHp - 1);
+                                updateBars();
+                                if (bossHp <= 0) { endFight(true); return; }
+                            }
+                            spawnDmg(t.x, 140, '-1', '#ff9d6e', false);
+                            flash(t.el);
+                        }, k * 500);
+                    }
+                }
+                log('🔥 烈焰冲击！造成 ' + curSkillDmg() + ' 点伤害，灼烧持续 4 秒！');
+            } else {
+                // 🌿 自然之怒：藤蔓缠绕 + 自身回血
+                const layer = document.getElementById('fxLayer');
+                if (t) {
+                    const svg = document.getElementById('arenaSvg');
+                    const ns = 'http://www.w3.org/2000/svg';
+                    const path = document.createElementNS(ns, 'path');
+                    path.setAttribute('d', 'M' + playerX + ' 210 Q' + ((playerX + t.x) / 2) + ' 150 ' + t.x + ' 198');
+                    path.setAttribute('stroke', '#7ee0a0');
+                    path.setAttribute('stroke-width', '4');
+                    path.setAttribute('fill', 'none');
+                    path.setAttribute('stroke-linecap', 'round');
+                    path.setAttribute('class', 'vine-path');
+                    svg.appendChild(path);
+                    setTimeout(() => path.remove(), 700);
+                    if (t.kind === 'minion') {
+                        minions[t.i].freeze = 2;
+                        t.el.classList.add('vined');
+                        setTimeout(() => t.el.classList.remove('vined'), 2000);
+                    } else {
+                        bossAI.freeze = 2;
+                        t.el.classList.add('vined');
+                        setTimeout(() => t.el.classList.remove('vined'), 2000);
+                    }
+                    damageEnemy(t, curSkillDmg(), true);
+                    spawnDmg(t.x, 140, '-' + curSkillDmg(), '#7ee0a0', true);
+                    flash(t.el);
+                }
+                spawnParticles(playerX, 180, '#7ee0a0', 26, 140);
+                const heal = Math.min(5, maxHp - playerHp);
+                playerHp += heal;
+                updateBars();
+                if (heal > 0) { spawnDmg(playerX, 80, '+' + heal, '#7ee0a0', false); }
+                log('🌿 自然之怒！缠绕敌人 2 秒，并回复 ' + heal + ' 点体力！');
+            }
+        }
+
+        // 🤕 玩家受击
+        function hurtPlayer(dmg, fromX, reason) {
+            if (hurtInv > 0 || gameOver) { return; }
+            playerHp = Math.max(0, playerHp - dmg);
+            hurtInv = 0.8;
+            document.getElementById('fighterMove').classList.add('inv-blink');
+            setFighterFace('hurt');
+            spawnDmg(playerX, 90, '-' + dmg, '#ff6b6b', true);
+            spawnParticles(playerX, 140, '#ff6b6b', 8, 70);
+            shake(false);
+            combo = 0; comboTimer = 0;
+            updateComboUI();
+            updateBars();
+            log(reason);
+            if (playerHp <= 0) { endFight(false); }
+        }
+
+        // 🪨 小怪 AI：逼近 + 撞击
+        function updateMinions(dt) {
+            minions.forEach(m => {
+                if (!m.alive) { return; }
+                if (m.freeze > 0) { m.freeze -= dt; return; }
+                const rage = m.rageT > 0;
+                if (m.rageT > 0) { m.rageT -= dt; }
+                const dir = playerX > m.x ? 1 : -1;
+                m.x += dir * 34 * (rage ? 2.2 : 1) * dt;
+                m.x = Math.max(200, Math.min(365, m.x));
+                document.getElementById('minion' + m.i).setAttribute('transform', 'translate(' + m.x + ' 0)');
+                // 🦵 小怪腿部关节摆动
+                m.walk = (m.walk || 0) + dt * (6 + 9 * (rage ? 1 : 0));
+                const s = Math.sin(m.walk) * (rage ? 14 : 8);
+                const g = document.getElementById('minion' + m.i);
+                const ll = g.querySelector('.minion-leg-l');
+                const lr = g.querySelector('.minion-leg-r');
+                if (ll) { ll.setAttribute('transform', 'rotate(' + (-s) + ' -15 192)'); }
+                if (lr) { lr.setAttribute('transform', 'rotate(' + s + ' 15 192)'); }
+                m.cd -= dt;
+                if (Math.abs(playerX - m.x) < 46 && m.cd <= 0) {
+                    m.cd = 1.2;
+                    hurtPlayer(1, m.x, '🪨 岩甲兽撞了过来！受到 1 点伤害！');
+                }
+            });
+        }
+
+        // 👹 Boss AI：走近 → 吐息 → 冲锋，狂暴加速
+        function updateBoss(dt) {
+            if (phase !== 'boss' || !bossAI) { return; }
+            if (bossAI.freeze > 0) { bossAI.freeze -= dt; return; }
+            const speed = bossAI.rage ? 95 : 55;
+            // 🩸 再生：Boss 缓慢回血（狂暴时更快）
+            bossAI.regen = (bossAI.regen || 0) - dt;
+            if (bossAI.regen <= 0) {
+                bossAI.regen = bossAI.rage ? 1.5 : 2.2;
+                if (bossHp < BOSS_MAX) {
+                    bossHp = Math.min(BOSS_MAX, bossHp + (bossAI.rage ? 2 : 1));
+                    updateBars();
+                    spawnDmg(bossX, 130, '+' + (bossAI.rage ? 2 : 1), '#ff5a3c', false);
+                }
+            }
+            // 🦵 移动时四肢关节摆动
+            const moving = bossAI.state === 'approach' || bossAI.state === 'charge' || bossAI.state === 'enter';
+            if (moving) {
+                bossWalkPhase += dt * (bossAI.rage ? 13 : 9);
+                const s = Math.sin(bossWalkPhase) * 14;
+                document.getElementById('bossLegL').setAttribute('transform', 'rotate(' + (-s) + ' 280 214)');
+                document.getElementById('bossLegR').setAttribute('transform', 'rotate(' + s + ' 320 214)');
+                document.getElementById('bossArmL').setAttribute('transform', 'rotate(' + (s * 0.5) + ' 256 134)');
+                document.getElementById('bossArmR').setAttribute('transform', 'rotate(' + (-s * 0.5) + ' 344 134)');
+            }
+            if (bossAI.state === 'enter') {
+                bossX -= 130 * dt;
+                if (bossX <= 300) {
+                    bossX = 300;
+                    bossAI.state = 'approach';
+                    bossAI.cd = 1.0;
+                    log('👹 镇塔魔尊登场！它被镇压了 8000 年，怒火冲天！');
+                }
+            } else if (bossAI.state === 'approach') {
+                const dir = playerX > bossX ? 1 : -1;
+                bossX += dir * speed * dt;
+                bossX = Math.max(210, Math.min(360, bossX));
+                if (Math.abs(playerX - bossX) < 50) {
+                    hurtPlayer(bossAI.rage ? 2 : 1, bossX, '👹 镇塔魔尊挥拳砸来！受到 ' + (bossAI.rage ? 2 : 1) + ' 点伤害！');
+                }
+                if (Math.abs(playerX - bossX) < 95) {
+                    bossAI.state = 'attack';
+                    bossAI.cd = 1.2;
+                }
+            } else if (bossAI.state === 'attack') {
+                bossAI.cd -= dt;
+                if (bossAI.cd <= 0) {
+                    bossBreath();
+                    bossAI.cd = bossAI.rage ? 0.9 : 1.4;
+                }
+                bossAI.chargeCd -= dt;
+                if (bossAI.chargeCd <= 0) {
+                    bossAI.state = 'charge';
+                    bossAI.chargeT = 0.8;
+                    setMonsterFace('angry');
+                    log('💨 镇塔魔尊发起冲锋！快躲开！');
+                    shake(false);
+                }
+                if (Math.abs(playerX - bossX) > 150) { bossAI.state = 'approach'; }
+            } else if (bossAI.state === 'charge') {
+                const dir = playerX > bossX ? 1 : -1;
+                bossX += dir * 240 * dt;
+                bossX = Math.max(200, Math.min(365, bossX));
+                bossAI.chargeT -= dt;
+                if (Math.abs(playerX - bossX) < 55 && hurtInv <= 0) {
+                    hurtPlayer(3, bossX, '⚡ 被冲锋撞飞！受到 3 点伤害！');
+                }
+                if (bossAI.chargeT <= 0) {
+                    bossAI.state = 'attack';
+                    bossAI.cd = 1.0;
+                    bossAI.chargeCd = 5.5;
+                }
+            }
+            document.getElementById('bossMove').setAttribute('transform', 'translate(' + (bossX - 300) + ' 0)');
+        }
+
+        // 🔥 Boss 吐息（可被跳跃躲开）
+        function bossBreath() {
+            const dir = playerX > bossX ? 1 : -1;
+            const layer = document.getElementById('fxLayer');
+            for (let i = 0; i < 5; i++) {
+                const fp = document.createElement('span');
+                fp.className = 'flame-pillar';
+                fp.style.background = 'linear-gradient(180deg,#ff5a3c,#e8552d 55%,rgba(120,20,10,0))';
+                const fx = bossX + dir * (18 + i * 12);
+                if (fx < 25 || fx > 375) { fp.remove(); continue; }
+                const pos = px(fx, 198);
+                fp.style.left = pos.x;
+                fp.style.top = pos.y;
+                fp.style.animationDelay = (i * 0.06) + 's';
+                layer.appendChild(fp);
+                setTimeout(() => fp.remove(), 800);
+            }
+            setMonsterFace('angry');
+            document.getElementById('bossArmL').setAttribute('transform', 'rotate(45 256 134)');
+            document.getElementById('bossArmR').setAttribute('transform', 'rotate(-45 344 134)');
+            if (!isJumping && Math.abs(playerX - bossX) < 120) {
+                hurtPlayer(bossAI.rage ? 3 : 2, bossX, '🔥 被烈焰吐息击中！受到 ' + (bossAI.rage ? 3 : 2) + ' 点伤害！');
+            } else if (!isJumping) {
+                log('🔥 镇塔魔尊喷出烈焰吐息！');
+            }
+            setTimeout(() => { if (!gameOver) { setMonsterFace('normal'); document.getElementById('bossArmL').setAttribute('transform', ''); document.getElementById('bossArmR').setAttribute('transform', ''); } }, 400);
+        }
+
+        // 👹 Boss 入场
+        function spawnBoss() {
+            phase = 'boss';
+            bossHp = BOSS_MAX;
+            bossAI = { state: 'enter', cd: 0, chargeCd: 4, chargeT: 0, freeze: 0, rage: false, regen: 2 };
+            bossX = 460;
+            document.getElementById('bossMove').setAttribute('transform', 'translate(160 0)');
+            document.getElementById('bossHpRow').style.display = '';
+            updateBars();
+            document.getElementById('bossAura').classList.remove('on');
+            setMonsterFace('angry');
+            shake(true);
+            const monster = document.getElementById('monster');
+            monster.classList.add('boss-roar');
+            setTimeout(() => monster.classList.remove('boss-roar'), 600);
+            log('⚠️ 地面震动！镇塔魔尊 · 大胖 觉醒了！！');
+        }
+
+        // 📈 升级系统
+        function updateXpUI() {
+            document.getElementById('xpFill').style.width = Math.min(100, xp / xpNeed * 100) + '%';
+            document.getElementById('xpNum').textContent = xp + '/' + xpNeed;
+            document.getElementById('levelTag').textContent = 'Lv.' + level;
+        }
+        function addXp(n) {
+            if (gameOver) { return; }
+            xp += n;
+            while (xp >= xpNeed && !gameOver) {
+                xp -= xpNeed;
+                level++;
+                maxHp += 2;
+                playerHp = maxHp;
+                xpNeed = Math.floor(xpNeed * 1.6);
+                document.getElementById('levelMsg').textContent = '⬆️ 升级！Lv.' + level + ' 体力上限 +2 · 伤害 +1';
+                spawnParticles(playerX, 130, '#ffd98a', 26, 150);
+                spawnDmg(playerX, 80, 'LEVEL UP!', '#ffd98a', true);
+                updateBars();
+            }
+            updateXpUI();
+        }
+        function curAtk() { return ELEMENTS[ele].atk + (level - 1); }
+        function curSkillDmg() { return ELEMENTS[ele].skill.dmg + (level - 1); }
+
         function updateBars() {
-            document.getElementById('playerFill').style.width = (playerHp / PLAYER_MAX * 100) + '%';
-            document.getElementById('monsterFill').style.width = (monsterHp / MONSTER_MAX * 100) + '%';
-            document.getElementById('playerHpNum').textContent = playerHp + '/' + PLAYER_MAX;
-            document.getElementById('monsterHpNum').textContent = monsterHp + '/' + MONSTER_MAX;
+            document.getElementById('playerFill').style.width = (playerHp / maxHp * 100) + '%';
+            document.getElementById('playerHpNum').textContent = playerHp + '/' + maxHp;
+            document.getElementById('monsterFill').style.width = (bossHp / BOSS_MAX * 100) + '%';
+            document.getElementById('monsterHpNum').textContent = bossHp + '/' + BOSS_MAX;
         }
 
         function battleAction() {
-            if (gameOver) {
-                startFight();
-            } else {
-                playerAttack();
-            }
-        }
-
-        function startCounter() {
-            if (counterInterval) { clearInterval(counterInterval); counterInterval = null; }
-            counterInterval = setInterval(() => {
-                if (gameOver) { return; }
-                if (isJumping) {
-                    spawnFire();
-                    log('🦘 小灯高高跳起，火焰从脚下飞过！');
-                    spawnFX('💨', 75, 50);
-                    return;
-                }
-                playerHp--;
-                updateBars();
-                document.getElementById('monster').classList.add('advance');
-                setMonsterFace('angry');
-                spawnFire();
-                setTimeout(() => {
-                    document.getElementById('monster').classList.remove('advance');
-                    setMonsterFace('normal');
-                }, 650);
-                document.getElementById('fighter').classList.add('hurt');
-                setFighterFace('hurt');
-                setTimeout(() => {
-                    document.getElementById('fighter').classList.remove('hurt');
-                    setFighterFace('normal');
-                }, 500);
-                spawnFX('🔥', 26, 50);
-                log('🔥 大胖吐火！小灯被火焰击中，掉了 1 点体力！');
-                if (playerHp <= 0) {
-                    endFight(false);
-                }
-            }, counterSpeed);
+            if (gameOver) { startFight(); return; }
+            if (fighting) { log('⚔️ 战斗中！稳住阵脚！'); return; }
+            if (!ele) { log('⚠️ 先选择一位元素战士！'); return; }
+            startFight();
         }
 
         function startFight() {
-            playerHp = PLAYER_MAX;
-            monsterHp = MONSTER_MAX;
+            level = 1; xp = 0; xpNeed = 10;
+            maxHp = PLAYER_MAX;
+            playerHp = maxHp;
+            playerX = 105;
+            bossHp = BOSS_MAX;
             gameOver = false;
+            fighting = true;
+            phase = 'minions';
+            atkCd = 0; ultCd = 0;
+            hurtInv = 0;
+            isJumping = false; jumpT = 0;
+            combo = 0; comboTimer = 0;
+            walkPhase = 0; bossWalkPhase = 0;
             attacking = false;
-            counterSpeed = 2500;
-            fireCount = 6;
-            document.getElementById('monster').classList.remove('knockback');
-            updateBars();
+            casting = false;
+            minions = [
+                { i: 0, x: 248, hp: 6, max: 6, alive: true, cd: 1.0, freeze: 0, rageT: 0, walk: 0 },
+                { i: 1, x: 296, hp: 7, max: 7, alive: true, cd: 1.0, freeze: 0, rageT: 0, walk: 0 },
+                { i: 2, x: 344, hp: 8, max: 8, alive: true, cd: 1.0, freeze: 0, rageT: 0, walk: 0 }
+            ];
+            fightEpoch++;
+            bossX = 460;
+            bossAI = null;
+            document.querySelectorAll('.minion').forEach(m => { m.style.display = ''; });
+            document.getElementById('bossMove').setAttribute('transform', 'translate(160 0)');
+            document.querySelectorAll('.frozen, .vined').forEach(el => el.classList.remove('frozen', 'vined'));
+            document.getElementById('bossHpRow').style.display = 'none';
+            document.getElementById('bossAura').classList.remove('on');
+            document.getElementById('fighterMove').classList.remove('inv-blink');
+            document.getElementById('fighterMove').setAttribute('transform', 'translate(0 0)');
+            document.getElementById('fighter').classList.remove('jumping', 'attacking');
+            ['kickLeg', 'leg2', 'arm', 'arm2', 'bossLegL', 'bossLegR', 'bossArmL', 'bossArmR'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.setAttribute('transform', ''); }
+            });
+            document.getElementById('levelMsg').textContent = '';
+            document.getElementById('comboTag').textContent = '';
             setFighterFace('normal');
             setMonsterFace('normal');
-            log('⚔️ 战斗开始！小灯 vs 大胖，用你的 ' + WEAPONS[currentWeapon].name + ' 打倒它！');
-            document.querySelector('#monsterBox button').textContent = '⚔️ 攻击！';
-            startCounter();
-        }
-
-        function playerAttack() {
-            if (gameOver || attacking) { return; }
-            if (isJumping) {
-                doKick();
-                return;
-            }
-            attacking = true;
-            const arm = document.getElementById('arm');
-            const arm2 = document.getElementById('arm2');
-            document.getElementById('fighter').classList.add('attacking');
-            setFighterFace('angry');
-            // 双手握剑，一起扬起
-            arm.setAttribute('transform', 'rotate(-150 105 100)');
-            arm2.setAttribute('transform', 'rotate(60 105 106)');
-            // 双手挥下：剑砍向怪兽 + 剑光弧线
-            setTimeout(() => {
-                arm.setAttribute('transform', 'rotate(-25 105 100)');
-                arm2.setAttribute('transform', 'rotate(15 105 106)');
-                spawnSlash();
-            }, 140);
-            setTimeout(() => {
-                const crit = Math.random() < 0.25;
-                const dmg = WEAPONS[currentWeapon].dmg + (crit ? 2 : 0);
-                monsterHp = Math.max(0, monsterHp - dmg);
-                updateBars();
-                document.getElementById('monster').classList.add('hit');
-                setMonsterFace('hit');
-                setTimeout(() => {
-                    document.getElementById('monster').classList.remove('hit');
-                    setMonsterFace('normal');
-                }, 450);
-                spawnFX(crit ? '✨💥' : '💥', 75, 50);
-                log('🗡️ ' + WEAPONS[currentWeapon].name + ' 砍中大胖！造成 ' + dmg + ' 点伤害' + (crit ? ' 💥暴击！' : ''));
-                arm.setAttribute('transform', '');
-                arm2.setAttribute('transform', '');
-                document.getElementById('fighter').classList.remove('attacking');
-                setFighterFace('normal');
-                attacking = false;
-                if (monsterHp <= 0) {
-                    endFight(true);
-                }
-            }, 300);
-        }
-
-        function doKick() {
-            const leg = document.getElementById('kickLeg');
-            const arm = document.getElementById('arm');
-            const arm2 = document.getElementById('arm2');
-            leg.setAttribute('transform', 'rotate(-125 105 132)');
-            arm.setAttribute('transform', 'rotate(-165 105 100)');
-            arm2.setAttribute('transform', 'rotate(140 105 106)');
-            document.getElementById('fighter').classList.add('attacking');
-            spawnFX('💨', 40, 70);
-            setTimeout(() => {
-                const crit = Math.random() < 0.25;
-                const dmg = 2 + (crit ? 2 : 0);
-                monsterHp = Math.max(0, monsterHp - dmg);
-                updateBars();
-                document.getElementById('monster').classList.add('knockback');
-                setMonsterFace('hit');
-                setTimeout(() => {
-                    document.getElementById('monster').classList.remove('knockback');
-                    setMonsterFace('normal');
-                }, 500);
-                spawnFX(crit ? '✨💥' : '💥', 70, 55);
-                spawnFX('🦵', 45, 62);
-                log('🦵 飞踢！正中大胖，造成 ' + dmg + ' 点伤害' + (crit ? ' 💥暴击！' : '') + '，大胖被踢退一步，气得吐火更快了！');
-                if (counterInterval) { clearInterval(counterInterval); counterInterval = null; }
-                counterSpeed = 1700;
-                fireCount = 9;
-                startCounter();
-                leg.setAttribute('transform', '');
-                arm.setAttribute('transform', '');
-                arm2.setAttribute('transform', '');
-                document.getElementById('fighter').classList.remove('attacking');
-                attacking = false;
-                if (monsterHp <= 0) {
-                    endFight(true);
-                }
-            }, 240);
+            setFighterColor();
+            updateBars();
+            updateXpUI();
+            updateUltUI();
+            document.getElementById('startBtn').textContent = '⚔️ 战斗中…';
+            document.getElementById('startBtn').disabled = true;
+            log('⚔️ 战斗开始！三只岩甲兽冲了过来，用 ' + ELEMENTS[ele].icon + ' 的力量打倒它们！');
         }
 
         function endFight(win) {
             gameOver = true;
-            if (counterInterval) { clearInterval(counterInterval); counterInterval = null; }
+            fighting = false;
+            document.getElementById('startBtn').disabled = false;
             if (win) {
                 fightWins++;
                 try { localStorage.setItem('fightWins', String(fightWins)); } catch (e) {}
+                playerHp = maxHp;            // 🎉 胜利回满血
+                updateBars();
                 document.getElementById('fightRecord').textContent = '🏆 胜利纪录：' + fightWins + ' 次';
                 setFighterFace('happy');
                 setMonsterFace('cry');
-                log('🎉 小灯赢了！大胖变成小猫咪：谢谢你陪我玩！');
+                document.getElementById('bossAura').classList.remove('on');
+                spawnParticles(bossX, 150, '#ffd98a', 32, 190);
+                log('🎉 镇塔魔尊被击败！古镇恢复了平静……你是英雄！');
             } else {
                 setFighterFace('hurt');
                 setMonsterFace('happy');
-                log('😵 小灯被大胖打趴下了！大胖得意地说：还敢来塔里吗？');
+                log('😵 你倒下了……镇塔魔尊狂笑：八千年了，终于又有人来塔里送命！');
             }
-            document.querySelector('#monsterBox button').textContent = '🔁 再来一局';
+            document.getElementById('startBtn').textContent = '🔁 再来一局';
+        }
+
+        // ⌨️ 键盘操控
+        document.addEventListener('keydown', e => {
+            const k = e.key.toLowerCase();
+            const tag = (e.target && e.target.tagName) || '';
+            const typing = tag === 'INPUT' || tag === 'TEXTAREA';
+            const inFight = fighting && !gameOver;
+            if (!typing && inFight && ['arrowleft', 'arrowright', 'arrowup', 'a', 'd', 'w', ' '].includes(k)) { e.preventDefault(); }
+            if (typing) { return; }
+            if (k === 'arrowleft' || k === 'a') { keys.left = true; }
+            if (k === 'arrowright' || k === 'd') { keys.right = true; }
+            if (k === 'arrowup' || k === 'w' || k === ' ') { doJump(); }
+            if (k === 'j') { doAttack(); }
+            if (k === 'k') { doUlt(); }
+        });
+        document.addEventListener('keyup', e => {
+            const k = e.key.toLowerCase();
+            if (k === 'arrowleft' || k === 'a') { keys.left = false; }
+            if (k === 'arrowright' || k === 'd') { keys.right = false; }
+        });
+
+        // 🚀 主循环
+        function gameLoop(t) {
+            const dt = Math.min((t - lastT) / 1000, 0.05);
+            lastT = t;
+            if (ele) { updatePlayer(dt); }
+            if (fighting && !gameOver) {
+                updateMinions(dt);
+                updateBoss(dt);
+            }
+            rafId = requestAnimationFrame(gameLoop);
         }
 
         setWeaponGraphic('fist');
@@ -1261,6 +2043,16 @@
         if (fightWins > 0) {
             document.getElementById('fightRecord').textContent = '🏆 胜利纪录：' + fightWins + ' 次';
         }
+        (function initUltBtn() {
+            const btn = document.getElementById('ultBtn');
+            if (btn && !btn.querySelector('.cd-fill')) {
+                const fill = document.createElement('span');
+                fill.className = 'cd-fill';
+                btn.appendChild(fill);
+            }
+        })();
+        requestAnimationFrame(t => { lastT = t; rafId = requestAnimationFrame(gameLoop); });
+
         // 🏘️ 体验1：点亮青石板路
         let stoneLit = 0;
         const STONE_TOTAL = 10;
