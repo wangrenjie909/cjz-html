@@ -744,6 +744,11 @@
                 <a href="https://www.baidu.com/s?wd=%E5%8F%A4%E9%95%87" target="_blank">去网上搜索"古镇"</a>，
                 会打开一个新页面哦。
             </p>
+            <p style="text-align:center; margin-top:18px;">
+                <a href="guzhen-movie.html" style="text-decoration:none;">
+                    <button type="button">🎬 观看微电影《古镇怪兽的传说》</button>
+                </a>
+            </p>
             <h3>📖 关于古镇的小事</h3>
             <p>古镇的每一条巷子都有自己的名字，比如"桂花巷""灯笼巷"。要是迷路了，就问问坐在门口的奶奶，她比地图还熟悉。</p>
             <p>🕰️ 夜越深，古镇越安静。风从河面吹来，带一点点桂花香。</p>
@@ -1166,6 +1171,7 @@
         let walkPhase = 0, bossWalkPhase = 0; // 🚶 行走关节动画相位
         let attacking = false;
         let casting = false;              // ✨ 大招施法动作中（手脚挥动，暂停走路摆动）
+        let jumpFxT = 0;                  // 🦘 空中拖尾粒子计时器
         let fightWins = 0;
         try { fightWins = parseInt(localStorage.getItem('fightWins') || '0'); } catch (e) {}
 
@@ -1353,13 +1359,42 @@
             }
             if (isJumping) {
                 jumpT -= dt;
+                // 🦵 空中蹬腿：双腿交替屈伸，脚步不停
+                if (!attacking && !casting) {
+                    walkPhase += dt * 20;
+                    const s = Math.sin(walkPhase) * 26;
+                    legL.setAttribute('transform', 'rotate(' + (-s) + ' 105 132)');
+                    legR.setAttribute('transform', 'rotate(' + s + ' 105 132)');
+                }
+                // ✨ 空中元素色拖尾
+                jumpFxT -= dt;
+                if (jumpFxT <= 0) {
+                    jumpFxT = 0.12;
+                    spawnParticles(playerX, 168 + Math.random() * 22, E.color, 2, 34);
+                }
                 if (jumpT <= 0) {
                     isJumping = false;
                     const f = document.getElementById('fighter');
                     f.classList.remove('jumping');
-                    document.getElementById('arm').setAttribute('transform', '');
-                    document.getElementById('arm2').setAttribute('transform', '');
+                    arm.setAttribute('transform', '');
+                    arm2.setAttribute('transform', '');
                     setFighterFace('normal');
+                    // 💥 落地冲击：元素色尘土四溅 + 冲击环 + 轻震（飞踢中不打断踢腿姿势）
+                    if (!attacking) {
+                        legL.setAttribute('transform', '');
+                        legR.setAttribute('transform', '');
+                    }
+                    spawnParticles(playerX, 200, E.color, 14, 80);
+                    spawnParticles(playerX, 200, '#a8c6ff', 6, 60);
+                    const layer = document.getElementById('fxLayer');
+                    const ring = document.createElement('span');
+                    ring.className = 'shock-ring';
+                    ring.style.setProperty('--rc', E.color);
+                    const pos = px(playerX, 205);
+                    ring.style.left = pos.x;
+                    ring.style.top = pos.y;
+                    layer.appendChild(ring);
+                    setTimeout(() => ring.remove(), 380);
                 }
             }
             if (atkCd > 0) { atkCd -= dt; }
@@ -1382,7 +1417,7 @@
         }
 
         function doJump() {
-            if (gameOver || isJumping || !ele) { return; }
+            if (gameOver || isJumping || attacking || casting || !ele) { return; }
             isJumping = true;
             jumpT = 0.55;
             const f = document.getElementById('fighter');
@@ -1391,7 +1426,14 @@
             f.classList.add('jumping');
             setFighterFace('ooh');
             const E = ELEMENTS[ele];
-            spawnParticles(playerX, 200, E.color, 6, 40);
+            // 🦵 起跳蓄力：双腿屈膝下蹲（蹬腿从屈膝位置开始）
+            walkPhase = Math.PI / 2;
+            document.getElementById('kickLeg').setAttribute('transform', 'rotate(-26 105 132)');
+            document.getElementById('leg2').setAttribute('transform', 'rotate(26 105 132)');
+            // 💨 起跳尘土：元素色向两侧飞溅 + 上升气流
+            spawnParticles(playerX - 14, 200, '#a8c6ff', 5, 48);
+            spawnParticles(playerX + 14, 200, E.color, 8, 52);
+            spawnParticles(playerX, 188, E.color, 6, 24);
         }
 
         function updateComboUI() {
@@ -1544,14 +1586,31 @@
 
         // 🦵 空中飞踢
         function doKick() {
+            attacking = true;
             atkCd = 0.5;
+            const ep = fightEpoch;
             const E = ELEMENTS[ele];
             const leg = document.getElementById('kickLeg');
-            leg.setAttribute('transform', 'rotate(-125 105 132)');
             const t = nearestEnemy();
+            const dir = t ? (t.x > playerX ? 1 : -1) : 1;
+            // 🦵 飞踢：腿朝角色前方（局部右前）大力踢出——镜像翻转后自动指向怪物方向
+            leg.setAttribute('transform', 'rotate(-125 105 132)');
             if (t && Math.abs(t.x - playerX) < 72) {
                 const dmg = curAtk() + 1;
-                spawnParticles(playerX + 30, 170, E.color, 10, 80);
+                // 💥 命中瞬间：脚踢到怪物身上——踢击点冲击 + 脚部粒子
+                const off = t.kind === 'boss' ? 40 : 20;
+                const kickX = t.x - off * dir;
+                const layer = document.getElementById('fxLayer');
+                const ring = document.createElement('span');
+                ring.className = 'shock-ring';
+                ring.style.setProperty('--rc', E.color);
+                const pos = px(kickX, 160);
+                ring.style.left = pos.x;
+                ring.style.top = pos.y;
+                layer.appendChild(ring);
+                setTimeout(() => ring.remove(), 380);
+                spawnParticles(kickX, 160, E.color, 12, 80);
+                spawnParticles(playerX + 42 * dir, 150, '#a8c6ff', 4, 40);
                 spawnDmg(t.x, 150, '-' + dmg, E.color, false);
                 flash(t.el);
                 shake(false);
@@ -1559,11 +1618,15 @@
                 combo++;
                 comboTimer = 2.5;
                 updateComboUI();
-                log('🦵 空中飞踢！造成 ' + dmg + ' 点伤害！');
+                log('🦵 空中飞踢！一脚踢中 ' + (t.kind === 'boss' ? '镇塔魔尊' : '岩甲兽') + '，造成 ' + dmg + ' 点伤害！');
             } else {
                 log('🦵 飞踢落空！');
             }
-            setTimeout(() => leg.setAttribute('transform', ''), 300);
+            setTimeout(() => {
+                if (ep !== fightEpoch) { attacking = false; return; }
+                leg.setAttribute('transform', '');
+                attacking = false;
+            }, 300);
         }
 
         // ✦ 元素大招

@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>古镇怪兽的传说 · 微电影</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; background: #04060f; overflow: hidden; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+    #stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 40%, #0a1124 0%, #04060f 70%); }
+    #screen {
+        position: relative; width: min(100vw, calc(100vh * 16 / 9)); aspect-ratio: 16 / 9;
+        background: #060b18; border-radius: 6px; overflow: hidden;
+        box-shadow: 0 0 80px rgba(80, 120, 220, 0.12), 0 0 24px rgba(0,0,0,0.8);
+    }
+    #screen.quake { animation: quake .28s; }
+    @keyframes quake {
+        0%,100%{ transform: translate(0,0); } 15%{ transform: translate(-7px,3px); }
+        35%{ transform: translate(6px,-4px); } 55%{ transform: translate(-5px,-2px); } 75%{ transform: translate(4px,2px); }
+    }
+    #scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+    /* 宽银幕黑边 */
+    #barT, #barB { position: absolute; left: 0; right: 0; height: 9%; background: #000; z-index: 5; }
+    #barT { top: 0; } #barB { bottom: 0; }
+    /* 字幕 */
+    #subtitle {
+        position: absolute; left: 8%; right: 8%; bottom: 13%; text-align: center;
+        color: #eef3ff; font-size: clamp(15px, 2.3vw, 26px); line-height: 1.7; z-index: 6;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.95), 0 0 30px rgba(0,0,0,0.6);
+        opacity: 0; transition: opacity .8s ease; letter-spacing: 1px;
+    }
+    #chapterTag {
+        position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+        color: rgba(200, 216, 255, 0.55); font-size: clamp(11px, 1.3vw, 15px);
+        letter-spacing: 6px; z-index: 6; transition: opacity .6s;
+    }
+    /* 进度条 */
+    #progressWrap { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255,255,255,0.08); z-index: 7; }
+    #progress { height: 100%; width: 0%; background: linear-gradient(90deg, #ffd98a, #ff9d6e); }
+    /* 控制 */
+    #controls { position: absolute; top: 10px; right: 12px; display: flex; gap: 8px; z-index: 8; }
+    #controls button {
+        background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.75); border: 1px solid rgba(255,255,255,0.15);
+        padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; transition: background .2s;
+    }
+    #controls button:hover { background: rgba(255,255,255,0.16); }
+    /* 开场海报 */
+    #poster {
+        position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 22px;
+        background: radial-gradient(ellipse at 50% 42%, #101b38 0%, #04060f 78%); text-align: center; padding: 20px;
+        transition: opacity 1s;
+    }
+    #poster.hide { opacity: 0; pointer-events: none; }
+    #poster h1 { color: #ffd98a; font-size: clamp(26px, 4.5vw, 52px); letter-spacing: 10px; text-shadow: 0 0 40px rgba(255,217,138,0.35); }
+    #poster .sub { color: #9fb4e8; font-size: clamp(13px, 1.8vw, 18px); letter-spacing: 3px; }
+    #poster .tip { color: rgba(180,200,240,0.5); font-size: 12px; letter-spacing: 1px; }
+    #poster button {
+        margin-top: 10px; background: linear-gradient(135deg, #ff9d6e, #e8552d); color: #fff; border: none;
+        padding: 14px 46px; border-radius: 40px; font-size: 18px; letter-spacing: 4px; cursor: pointer;
+        box-shadow: 0 6px 24px rgba(232,85,45,0.4); transition: transform .2s;
+    }
+    #poster button:hover { transform: scale(1.06); }
+    #endCard {
+        position: absolute; inset: 0; z-index: 19; display: flex; flex-direction: column; align-items: center;
+        justify-content: center; gap: 16px; background: rgba(4,6,15,0.85); opacity: 0; pointer-events: none; transition: opacity 1.2s;
+    }
+    #endCard.show { opacity: 1; pointer-events: auto; }
+    #endCard h2 { color: #ffd98a; font-size: clamp(22px, 3.5vw, 40px); letter-spacing: 8px; }
+    #endCard p { color: #9fb4e8; font-size: clamp(12px, 1.6vw, 16px); letter-spacing: 2px; }
+    #endCard button {
+        margin-top: 8px; background: rgba(255,255,255,0.1); color: #eef3ff; border: 1px solid rgba(255,255,255,0.25);
+        padding: 10px 28px; border-radius: 30px; font-size: 14px; cursor: pointer; letter-spacing: 2px;
+    }
+    #endCard button:hover { background: rgba(255,255,255,0.2); }
+    /* 通用动画 */
+    .tw { animation: twinkle 3s ease-in-out infinite; }
+    @keyframes twinkle { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+    .glow-red { animation: glowRed 1.6s ease-in-out infinite; }
+    @keyframes glowRed { 0%,100% { opacity: .8; } 50% { opacity: 1; filter: drop-shadow(0 0 8px #ff5a3c); } }
+    .glow-blue { animation: glowBlue 2s ease-in-out infinite; }
+    @keyframes glowBlue { 0%,100% { opacity: .55; } 50% { opacity: .95; filter: drop-shadow(0 0 14px #7fd0ff); } }
+    .fog-move { animation: fogMove 10s ease-in-out infinite alternate; }
+    @keyframes fogMove { from { transform: translateX(-30px); } to { transform: translateX(30px); } }
+    .breath { animation: breath 3.4s ease-in-out infinite; transform-origin: 640px 420px; }
+    @keyframes breath { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+    /* 场景切换转场 */
+    #scene .swap { transition: opacity .5s ease; }
+    .lantern-pulse { animation: lanternPulse 2.2s ease-in-out infinite; }
+    @keyframes lanternPulse { 0%,100% { opacity: .75; } 50% { opacity: 1; } }
+    .fx-ring { fill: none; stroke-width: 3; animation: ringOut .55s ease-out forwards; }
+    @keyframes ringOut { from { r: 8; opacity: .9; } to { r: 70; opacity: 0; } }
+    .fx-spark { animation: sparkFly .6s ease-out forwards; }
+    @keyframes sparkFly { from { opacity: 1; } to { opacity: 0; transform: translate(var(--dx), var(--dy)); } }
+</style>
+</head>
+<body>
+<div id="stage">
+    <div id="screen">
+        <svg id="scene" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice">
+            <defs>
+                <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#050a1a"/><stop offset="55%" stop-color="#0a1430"/><stop offset="100%" stop-color="#13204a"/>
+                </linearGradient>
+                <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0a1630"/><stop offset="100%" stop-color="#040914"/>
+                </linearGradient>
+                <linearGradient id="recallG" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0c1e44"/><stop offset="100%" stop-color="#1c4a7a"/>
+                </linearGradient>
+                <radialGradient id="moonG" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#dbe6ff" stop-opacity="0.9"/><stop offset="45%" stop-color="#9fb4e8" stop-opacity="0.35"/><stop offset="100%" stop-color="#9fb4e8" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="lampG" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ffe9b0" stop-opacity="0.9"/><stop offset="100%" stop-color="#ffd98a" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="beamG" cx="50%" cy="0%" r="80%">
+                    <stop offset="0%" stop-color="#9fb4e8" stop-opacity="0.16"/><stop offset="100%" stop-color="#9fb4e8" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="dawnG" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#35488c"/><stop offset="42%" stop-color="#d98a6a"/><stop offset="68%" stop-color="#ffd9a0"/><stop offset="100%" stop-color="#ffe9c8"/>
+                </linearGradient>
+                <radialGradient id="sunG" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ffe9b0" stop-opacity="0.9"/><stop offset="100%" stop-color="#ffe9b0" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+
+            <!-- ═══ 外景（幕0/1/3） ═══ -->
+            <g id="gOuter" class="swap">
+                <rect width="960" height="540" fill="url(#skyG)"/>
+                <!-- 星 -->
+                <g fill="#dbe6ff">
+                    <circle class="tw" cx="90" cy="70" r="1.4"/><circle class="tw" cx="210" cy="40" r="1" style="animation-delay:.8s"/>
+                    <circle class="tw" cx="340" cy="95" r="1.6" style="animation-delay:1.6s"/><circle class="tw" cx="470" cy="52" r="1" style="animation-delay:.4s"/>
+                    <circle class="tw" cx="610" cy="80" r="1.5" style="animation-delay:1.2s"/><circle class="tw" cx="760" cy="46" r="1.2" style="animation-delay:2s"/>
+                    <circle class="tw" cx="880" cy="100" r="1.6" style="animation-delay:.6s"/><circle class="tw" cx="540" cy="130" r="1" style="animation-delay:1.8s"/>
+                </g>
+                <!-- 月 -->
+                <circle cx="180" cy="120" r="120" fill="url(#moonG)"/>
+                <circle cx="180" cy="120" r="30" fill="#e6eeff" opacity="0.95"/>
+                <!-- 雾 -->
+                <ellipse class="fog-move" cx="480" cy="300" rx="520" ry="26" fill="#8fb0e0" opacity="0.06"/>
+                <ellipse class="fog-move" cx="420" cy="330" rx="460" ry="22" fill="#8fb0e0" opacity="0.05" style="animation-delay:3s"/>
+                <!-- 远山 -->
+                <path d="M0 330 L120 250 L230 320 L340 268 L460 330 L580 250 L700 320 L820 262 L960 330 L960 420 L0 420 Z" fill="#0a1230" opacity="0.85"/>
+                <!-- 古镇剪影 -->
+                <g id="town" fill="#070d20">
+                    <path d="M0 420 L0 380 L60 350 L120 380 L120 420 Z"/>
+                    <path d="M120 420 L120 368 L200 330 L280 368 L280 420 Z"/>
+                    <path d="M280 420 L280 372 L360 338 L440 372 L440 420 Z"/>
+                    <path d="M440 420 L440 362 L520 324 L600 362 L600 420 Z"/>
+                    <path d="M600 420 L600 376 L700 342 L800 376 L800 420 Z"/>
+                    <path d="M800 420 L800 366 L880 336 L960 366 L960 420 Z"/>
+                </g>
+                <!-- 塔 -->
+                <g id="tower" transform="translate(640 0)">
+                    <path d="M0 420 L0 300 L-30 300 L-30 260 L-16 260 L-16 220 L16 220 L16 260 L30 260 L30 300 L0 300 Z" fill="#060b1c"/>
+                    <path d="M-40 260 L-24 196 L24 196 L40 260 Z" fill="#070d20"/>
+                    <path d="M-16 196 L0 148 L16 196 Z" fill="#080f24"/>
+                    <rect x="-7" y="300" width="14" height="120" fill="#0a1226"/>
+                    <circle id="towerLight" cx="0" cy="182" r="5" fill="#ffd98a" opacity="0.55" class="lantern-pulse"/>
+                </g>
+                <!-- 水面 -->
+                <rect y="420" width="960" height="120" fill="url(#waterG)"/>
+                <g stroke="#2a4a86" stroke-width="1" opacity="0.3">
+                    <line x1="80" y1="452" x2="180" y2="452"/><line x1="300" y1="486" x2="420" y2="486"/>
+                    <line x1="540" y1="458" x2="660" y2="458"/><line x1="760" y1="492" x2="880" y2="492"/>
+                </g>
+                <ellipse cx="180" cy="430" rx="90" ry="14" fill="#9fb4e8" opacity="0.08"/>
+            </g>
+
+            <!-- ═══ 泽国回忆（幕2） ═══ -->
+            <g id="gRecall" class="swap" opacity="0">
+                <rect width="960" height="540" fill="url(#recallG)"/>
+                <!-- 水面 -->
+                <rect y="330" width="960" height="210" fill="url(#waterG)" opacity="0.75"/>
+                <g stroke="#5a8cc8" stroke-width="1.4" opacity="0.35">
+                    <line x1="60" y1="360" x2="200" y2="360"/><line x1="260" y1="400" x2="420" y2="400"/>
+                    <line x1="500" y1="370" x2="660" y2="370"/><line x1="720" y1="410" x2="880" y2="410"/>
+                    <line x1="140" y1="440" x2="320" y2="440"/><line x1="560" y1="450" x2="760" y2="450"/>
+                </g>
+                <!-- 守护者（人性化：温和的蓝色巨灵） -->
+                <g id="guardian" opacity="0">
+                    <ellipse cx="520" cy="352" rx="200" ry="34" fill="#7fd0ff" opacity="0.1"/>
+                    <path d="M520 120 C 430 120 400 210 396 330 L644 330 C 640 210 610 120 520 120 Z" fill="#16325e" stroke="#7fd0ff" stroke-width="4" opacity="0.92"/>
+                    <path d="M452 150 L430 100 L474 136 Z" fill="#1b3a6e" stroke="#7fd0ff" stroke-width="3"/>
+                    <path d="M588 150 L610 100 L566 136 Z" fill="#1b3a6e" stroke="#7fd0ff" stroke-width="3"/>
+                    <ellipse class="glow-blue" cx="492" cy="180" rx="7" ry="5" fill="#bfe3ff"/>
+                    <ellipse class="glow-blue" cx="548" cy="180" rx="7" ry="5" fill="#bfe3ff"/>
+                    <path d="M492 210 Q520 226 548 210" stroke="#7fd0ff" stroke-width="4" fill="none"/>
+                    <!-- 托起的水 -->
+                    <path d="M380 330 Q420 300 460 330 Q500 300 540 330 Q580 300 620 330 Q660 300 680 330" stroke="#bfe3ff" stroke-width="3" fill="none" opacity="0.5"/>
+                </g>
+                <!-- 渔船与渔火 -->
+                <g id="boats" opacity="0">
+                    <path d="M150 380 Q170 394 196 380 L190 368 L156 368 Z" fill="#0c1a38"/>
+                    <circle class="lantern-pulse" cx="173" cy="370" r="5" fill="#ffd98a" opacity="0.8"/>
+                    <path d="M640 416 Q660 430 686 416 L680 404 L646 404 Z" fill="#0c1a38"/>
+                    <circle class="lantern-pulse" cx="663" cy="406" r="5" fill="#ffd98a" opacity="0.8"/>
+                </g>
+                <!-- 萤火 -->
+                <g fill="#ffe9b0">
+                    <circle class="tw" cx="300" cy="250" r="2" style="animation-delay:.3s"/>
+                    <circle class="tw" cx="420" cy="200" r="1.6" style="animation-delay:1s"/>
+                    <circle class="tw" cx="700" cy="230" r="2" style="animation-delay:1.7s"/>
+                    <circle class="tw" cx="820" cy="280" r="1.6" style="animation-delay:.8s"/>
+                </g>
+            </g>
+
+            <!-- ═══ 塔内（幕4-8） ═══ -->
+            <g id="gInner" class="swap" opacity="0">
+                <rect width="960" height="540" fill="#0a0d1c"/>
+                <!-- 石壁与地面 -->
+                <path d="M0 0 L0 150 Q90 120 220 130 L220 0 Z" fill="#101531"/>
+                <path d="M960 0 L960 160 Q880 130 760 140 L760 0 Z" fill="#101531"/>
+                <rect y="470" width="960" height="70" fill="#0c0f20"/>
+                <g stroke="#1c2448" stroke-width="2" opacity="0.5">
+                    <line x1="40" y1="480" x2="200" y2="480"/><line x1="260" y1="500" x2="460" y2="500"/>
+                    <line x1="540" y1="490" x2="740" y2="490"/><line x1="800" y1="510" x2="940" y2="510"/>
+                </g>
+                <!-- 顶部洒下的光束 -->
+                <rect x="300" y="0" width="360" height="540" fill="url(#beamG)"/>
+                <!-- 尘埃 -->
+                <g fill="#9fb4e8" opacity="0.35">
+                    <circle class="tw" cx="420" cy="180" r="1.2" style="animation-delay:.5s"/>
+                    <circle class="tw" cx="520" cy="230" r="1" style="animation-delay:1.4s"/>
+                    <circle class="tw" cx="470" cy="300" r="1.3" style="animation-delay:.9s"/>
+                </g>
+            </g>
+
+            <!-- ═══ 清晨·古镇苏醒（第九章） ═══ -->
+            <g id="gDawn" class="swap" opacity="0">
+                <!-- 晨曦天色（半透明，让古镇剪影与塔透出） -->
+                <rect width="960" height="540" fill="url(#dawnG)" opacity="0.55"/>
+                <circle id="sun" cx="820" cy="360" r="46" fill="#ffd9a0" opacity="0.95"/>
+                <circle cx="820" cy="360" r="92" fill="url(#sunG)"/>
+                <ellipse class="fog-move" cx="480" cy="330" rx="520" ry="22" fill="#ffe9c8" opacity="0.12"/>
+                <!-- 炊烟 -->
+                <g id="chimney">
+                    <rect x="148" y="298" width="14" height="26" fill="#10172e"/>
+                    <g id="smoke">
+                        <circle class="tw" cx="155" cy="282" r="5" fill="#cfd8ea" opacity="0.45"/>
+                    </g>
+                </g>
+                <!-- 河岸线（居民站立处） -->
+                <path d="M0 444 L140 438 L300 444 L460 438 L620 444 L780 438 L960 444 L960 472 L0 472 Z" fill="#1a2340"/>
+                <!-- 扫街 -->
+                <g id="folkSweep" transform="translate(250 0)">
+                    <line x1="0" y1="398" x2="-8" y2="452" stroke="#141b33" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="0" y1="398" x2="8" y2="452" stroke="#141b33" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="0" y1="352" x2="0" y2="400" stroke="#141b33" stroke-width="6" stroke-linecap="round"/>
+                    <line id="sArm" x1="0" y1="360" x2="24" y2="372" stroke="#141b33" stroke-width="5" stroke-linecap="round"/>
+                    <line id="sBroom" x1="26" y1="374" x2="42" y2="430" stroke="#141b33" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="0" cy="336" r="14" fill="none" stroke="#141b33" stroke-width="5"/>
+                </g>
+                <!-- 挑担 -->
+                <g id="folkCarry" transform="translate(430 0)">
+                    <line id="cLegA" x1="0" y1="398" x2="-9" y2="452" stroke="#141b33" stroke-width="6" stroke-linecap="round"/>
+                    <line id="cLegB" x1="0" y1="398" x2="9" y2="452" stroke="#141b33" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="0" y1="352" x2="0" y2="400" stroke="#141b33" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="-32" y1="340" x2="32" y2="340" stroke="#141b33" stroke-width="3"/>
+                    <path d="M-32 340 L-32 372 L-18 370 L-18 346 Z" fill="#141b33"/>
+                    <path d="M32 340 L32 372 L18 370 L18 346 Z" fill="#141b33"/>
+                    <circle cx="0" cy="336" r="14" fill="none" stroke="#141b33" stroke-width="5"/>
+                </g>
+                <!-- 河边洗衣 -->
+                <g id="folkWash" transform="translate(700 0)">
+                    <line x1="-10" y1="430" x2="-14" y2="462" stroke="#141b33" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="10" y1="430" x2="14" y2="462" stroke="#141b33" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="0" y1="380" x2="0" y2="432" stroke="#141b33" stroke-width="6" stroke-linecap="round"/>
+                    <line id="wArmA" x1="0" y1="390" x2="-16" y2="404" stroke="#141b33" stroke-width="5" stroke-linecap="round"/>
+                    <line id="wArmB" x1="0" y1="392" x2="16" y2="406" stroke="#141b33" stroke-width="5" stroke-linecap="round"/>
+                    <circle cx="0" cy="366" r="13" fill="none" stroke="#141b33" stroke-width="5"/>
+                    <path d="M-18 452 Q0 462 18 452 L14 442 L-14 442 Z" fill="#141b33"/>
+                </g>
+                <!-- 孩童跑过 -->
+                <g id="folkKid" transform="translate(540 0)">
+                    <line id="kLegA" x1="0" y1="416" x2="-7" y2="452" stroke="#141b33" stroke-width="5" stroke-linecap="round"/>
+                    <line id="kLegB" x1="0" y1="416" x2="7" y2="452" stroke="#141b33" stroke-width="5" stroke-linecap="round"/>
+                    <line x1="0" y1="378" x2="0" y2="418" stroke="#141b33" stroke-width="5" stroke-linecap="round"/>
+                    <line x1="0" y1="384" x2="12" y2="392" stroke="#141b33" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="0" cy="366" r="11" fill="none" stroke="#141b33" stroke-width="5"/>
+                </g>
+                <!-- 推开的窗（暖光） -->
+                <g id="windowOpen">
+                    <rect x="330" y="330" width="34" height="40" fill="#ffd98a" opacity="0.85"/>
+                    <rect x="330" y="330" width="34" height="40" fill="none" stroke="#141b33" stroke-width="3"/>
+                    <line x1="347" y1="330" x2="347" y2="370" stroke="#141b33" stroke-width="2"/>
+                </g>
+                <!-- 河面晨光 -->
+                <g stroke="#ffd98a" opacity="0.3">
+                    <line x1="620" y1="456" x2="690" y2="456"/><line x1="720" y1="488" x2="800" y2="488"/><line x1="480" y1="496" x2="550" y2="496"/>
+                </g>
+                <!-- 塔顶的灯（守护者的痕迹，仍亮着） -->
+                <circle id="dawnTowerLight" cx="640" cy="182" r="5" fill="#ffd98a" opacity="0.8" class="lantern-pulse"/>
+            </g>
+
+            <!-- ═══ 小灯（提灯少年） ═══ -->
+            <g id="little" transform="translate(250 0)">
+                <ellipse cx="0" cy="468" rx="40" ry="10" fill="#ffd98a" opacity="0.14"/>
+                <line id="lLegA" x1="0" y1="400" x2="-11" y2="466" stroke="#eaf2ff" stroke-width="6" stroke-linecap="round"/>
+                <line id="lLegB" x1="0" y1="400" x2="11" y2="466" stroke="#eaf2ff" stroke-width="6" stroke-linecap="round"/>
+                <line x1="0" y1="356" x2="0" y2="402" stroke="#eaf2ff" stroke-width="6" stroke-linecap="round"/>
+                <line id="lArmA" x1="0" y1="364" x2="-18" y2="376" stroke="#eaf2ff" stroke-width="5" stroke-linecap="round"/>
+                <line id="lArmB" x1="0" y1="366" x2="22" y2="372" stroke="#eaf2ff" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="0" cy="340" r="15" fill="none" stroke="#eaf2ff" stroke-width="5"/>
+                <g id="lFace"><circle cx="-5" cy="338" r="2.4" fill="#0a1428"/><circle cx="5" cy="338" r="2.4" fill="#0a1428"/></g>
+                <!-- 灯笼 -->
+                <g id="lantern">
+                    <line x1="24" y1="370" x2="38" y2="388" stroke="#eaf2ff" stroke-width="3"/>
+                    <circle class="lantern-pulse" cx="46" cy="398" r="22" fill="url(#lampG)"/>
+                    <circle cx="46" cy="398" r="5" fill="#ffd98a"/>
+                </g>
+                <!-- 剑（战斗时） -->
+                <g id="sword" opacity="0">
+                    <line x1="24" y1="368" x2="60" y2="330" stroke="#cfd8ea" stroke-width="4" stroke-linecap="round"/>
+                    <polygon points="60,330 53,321 66,324" fill="#cfd8ea"/>
+                </g>
+            </g>
+
+            <!-- ═══ 镇塔魔尊·大胖（塔内） ═══ -->
+            <g id="big" transform="translate(660 0)">
+                <ellipse cx="0" cy="468" rx="120" ry="22" fill="#ff5a3c" opacity="0.07"/>
+                <g class="breath">
+                    <path d="M0 240 C -78 240 -104 330 -96 452 L96 452 C104 330 78 240 0 240 Z" fill="#150e2c" stroke="#ff5a3c" stroke-width="3" opacity="0.96"/>
+                    <path d="M-96 452 L-84 486 L-34 466 L0 490 L34 466 L84 486 L96 452 Z" fill="#1a1136" stroke="#ff5a3c" stroke-width="2" opacity="0.85"/>
+                    <path id="bArmL" d="M-40 300 Q-118 336 -104 396" stroke="#1a1136" stroke-width="20" fill="none" stroke-linecap="round"/>
+                    <path id="bArmR" d="M40 300 Q118 336 104 396" stroke="#1a1136" stroke-width="20" fill="none" stroke-linecap="round"/>
+                    <ellipse cx="0" cy="212" rx="42" ry="46" fill="#150e2c" stroke="#ff5a3c" stroke-width="3"/>
+                    <path d="M-26 184 L-46 144 L-12 174 Z" fill="#2b2148" stroke="#ff5a3c" stroke-width="2"/>
+                    <path d="M26 184 L46 144 L12 174 Z" fill="#2b2148" stroke="#ff5a3c" stroke-width="2"/>
+                    <ellipse id="bEyeL" class="glow-red" cx="-15" cy="210" rx="5.5" ry="4.5" fill="#ff5a3c"/>
+                    <ellipse id="bEyeR" class="glow-red" cx="15" cy="210" rx="5.5" ry="4.5" fill="#ff5a3c"/>
+                    <path id="bMouth" d="M-16 236 Q0 248 16 236" stroke="#ff5a3c" stroke-width="3.5" fill="none"/>
+                </g>
+            </g>
+
+            <!-- ═══ 特效层 ═══ -->
+            <g id="fx"></g>
+        </svg>
+
+        <div id="barT"></div><div id="barB"></div>
+        <div id="chapterTag">序 章 · 夜</div>
+        <div id="subtitle"></div>
+        <div id="progressWrap"><div id="progress"></div></div>
+        <div id="controls">
+            <button id="pauseBtn" onclick="togglePause()">⏸ 暂停</button>
+            <button onclick="restart()">↺ 重播</button>
+        </div>
+    </div>
+
+    <div id="poster">
+        <h1>古镇怪兽的传说</h1>
+        <div class="sub">—— 一部关于误解与守护的微电影 ——</div>
+        <button onclick="startMovie()">▶ 开始放映</button>
+        <div class="tip">建议全屏观看 · 戴上耳机感受氛围</div>
+    </div>
+    <div id="endCard">
+        <h2>《古镇怪兽的传说》· 完</h2>
+        <p>感谢观看 —— 传说里没有怪兽，只有一位孤独的守护者</p>
+        <button onclick="restart()">↺ 再看一遍</button>
+    </div>
+</div>
+
+<script>
+    // ═══════════ 章节与时长 ═══════════
+    const CHS = [
+        { name: '序 章 · 夜',     dur: 8 },
+        { name: '第一章 · 传说',  dur: 10 },
+        { name: '第二章 · 泽国',  dur: 12 },
+        { name: '第三章 · 封印',  dur: 10 },
+        { name: '第四章 · 夜访',  dur: 9 },
+        { name: '第五章 · 对峙',  dur: 9 },
+        { name: '第六章 · 激战',  dur: 14 },
+        { name: '第七章 · 真相',  dur: 11 },
+        { name: '第八章 · 和解',  dur: 12 },
+        { name: '第九章 · 清晨',  dur: 15 }
+    ];
+    const TOTAL = CHS.reduce((a, c) => a + c.dur, 0);
+    const ST = []; // 各章起始秒
+    { let acc = 0; CHS.forEach(c => { ST.push(acc); acc += c.dur; }); }
+
+    // 字幕： [开始秒, 持续秒, 文本]
+    const LINES = [
+        [0.4, 4.5,  '入夜，古镇沉睡在传说里。'],
+        [9, 6,      '老人们说：塔里，镇着一头怪兽。'],
+        [19, 6,     '却很少有人记得——它曾守护这片泽国。'],
+        [26, 3.5,   '洪水退去，渔火又亮。'],
+        [31, 5,     '人们畏惧它的力量，用九层宝塔将它封印。'],
+        [37, 3,     '孤独，从此开始。'],
+        [41, 5.5,   '今夜，一个提灯的少年，走进塔中。'],
+        [50, 4.5,   '「八千年了……终于有人来塔里。」'],
+        [55, 3,   '「是来……杀我的吗？」'],
+        [59, 6,     '塔在颤抖，火星在黑暗中炸开。'],
+        [67, 4.5,   '剑光与火光，在沉默里交错。'],
+        [73, 5,     '少年忽然看见它眼中的光——'],
+        [79, 4,   '那不是凶光，是八千年无人倾诉的孤独。'],
+        [84, 5,     '「我不是怪兽。我只是……想守护这片水。」'],
+        [90, 3.5,   '少年放下剑，点亮了灯笼。'],
+        [94, 1,   '那一夜，塔下的灯，亮了。'],
+        [96, 4,     '传说里没有怪兽，只有一位孤独的守护者。'],
+        [100.5, 4.5, '天亮了。雾散开，第一缕阳光照进老街。'],
+        [105.5, 4.5, '人们像往常一样醒来：挑水、扫街、生火做饭。'],
+        [108.5, 1.5, '《古镇怪兽的传说》· 完']
+    ];
+
+    // ═══════════ 状态 ═══════════
+    let t = 0, last = 0, playing = false, chapter = -1, lastLine = null;
+    let actx = null, drone = null, tickTimer = null;
+    let lastC6 = -1;                  // 战斗命中边沿检测（上一帧相位）
+
+    const $ = id => document.getElementById(id);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const setOp = (id, v) => { const el = $(id); if (el) el.style.opacity = v; };
+
+    function chIndex() {
+        for (let i = CHS.length - 1; i >= 0; i--) { if (t >= ST[i]) { return i; } }
+        return 0;
+    }
+
+    // ═══════════ 特效 ═══════════
+    function spark(x, y, color, n, spread) {
+        const fx = $('fx');
+        for (let i = 0; i < n; i++) {
+            const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            c.setAttribute('cx', x); c.setAttribute('cy', y);
+            c.setAttribute('r', 1.5 + Math.random() * 2.5);
+            c.setAttribute('fill', color);
+            c.setAttribute('class', 'fx-spark');
+            const a = Math.random() * Math.PI * 2, d = spread * (0.4 + Math.random() * 0.6);
+            c.style.setProperty('--dx', (Math.cos(a) * d) + 'px');
+            c.style.setProperty('--dy', (Math.sin(a) * d) + 'px');
+            fx.appendChild(c);
+            setTimeout(() => c.remove(), 620);
+        }
+    }
+    function ring(x, y, color) {
+        const fx = $('fx');
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('cx', x); c.setAttribute('cy', y);
+        c.setAttribute('stroke', color); c.setAttribute('class', 'fx-ring');
+        fx.appendChild(c);
+        setTimeout(() => c.remove(), 600);
+    }
+    function quake() {
+        const s = $('screen');
+        s.classList.remove('quake'); void s.offsetWidth; s.classList.add('quake');
+    }
+
+    // ═══════════ 章节进入 / 更新 ═══════════
+    const enter = [
+        () => { setOp('gOuter', 1); setOp('gRecall', 0); setOp('gInner', 0); setOp('little', 0); setOp('big', 0); setOp('gDawn', 0); },
+        () => { setOp('gOuter', 1); setOp('gRecall', 0); setOp('gInner', 0); setOp('little', 0); setOp('big', 0); setOp('gDawn', 0); },
+        () => { setOp('gOuter', 0); setOp('gRecall', 1); setOp('gInner', 0); setOp('little', 0); setOp('big', 0); setOp('guardian', 1); setOp('boats', 1); },
+        () => { setOp('gOuter', 1); setOp('gRecall', 0); setOp('gInner', 0); setOp('little', 0); setOp('big', 0); },
+        () => { setOp('gOuter', 0); setOp('gRecall', 0); setOp('gInner', 1); setOp('little', 1); setOp('big', 0); },
+        () => { setOp('gOuter', 0); setOp('gRecall', 0); setOp('gInner', 1); setOp('little', 1); setOp('big', 1); },
+        () => { setOp('gOuter', 0); setOp('gRecall', 0); setOp('gInner', 1); setOp('little', 1); setOp('big', 1); },
+        () => { setOp('gOuter', 0); setOp('gRecall', 0); setOp('gInner', 1); setOp('little', 1); setOp('big', 1); },
+        () => { setOp('gOuter', 0); setOp('gRecall', 0); setOp('gInner', 1); setOp('little', 1); setOp('big', 1); },
+        () => { setOp('gOuter', 1); setOp('gRecall', 0); setOp('gInner', 0); setOp('little', 0); setOp('big', 0); setOp('gDawn', 0); }
+    ];
+
+    function onChapter(i) {
+        chapter = i;
+        $('chapterTag').textContent = CHS[i].name;
+        if (enter[i]) { enter[i](); }
+        // 音效章节切换
+        if (actx) { onChapterAudio(i); }
+    }
+
+    // 每章动画
+    const update = [
+        // 0 序章：月光、雾、塔灯
+        (p) => { $('towerLight').setAttribute('opacity', 0.4 + 0.3 * Math.sin(t * 1.4)); },
+        // 1 传说：镜头推近塔
+        (p) => { const s = 1 + p * 0.22; $('tower').setAttribute('transform', 'translate(640 0) scale(' + s + ')'); $('towerLight').setAttribute('opacity', 0.4 + 0.35 * Math.sin(t * 2.2)); },
+        // 2 泽国：守护者上下浮动、水波扩散、渔船灯火
+        (p) => {
+            const o = clamp(p * 2.4, 0, 1);
+            setOp('guardian', o); setOp('boats', o);
+            $('guardian').setAttribute('transform', 'translate(0 ' + (Math.sin(t * 1.6) * 6) + ')');
+            setOp('guardian', o * (0.85 + 0.15 * Math.sin(t * 2)));
+            if (Math.random() < 0.08) { ring(520, 350, '#7fd0ff'); }
+        },
+        // 3 封印：塔影压落、红光警示
+        (p) => {
+            const o = p < 0.5 ? p * 2 : 1;
+            const s = 1 + Math.sin(t * 3) * 0.01;
+            $('tower').setAttribute('transform', 'translate(640 0) scale(' + s + ')');
+            $('towerLight').setAttribute('opacity', 0.2 + 0.3 * Math.abs(Math.sin(t * 2.4)));
+        },
+        // 4 夜访：小灯提灯走入，脚步与手臂摆动
+        (p) => {
+            const x = 700 - p * 420;
+            $('little').setAttribute('transform', 'translate(' + x + ' 0)');
+            runLegs(1.4);
+            const s = Math.sin(t * 9) * 6;
+            $('lArmA').setAttribute('transform', 'rotate(' + (-s) + ' 0 364)');
+            $('lantern').setAttribute('transform', 'rotate(' + (s * 1.6) + ' 22 372)');
+            setOp('lantern', 1); setOp('sword', 0);
+        },
+        // 5 对峙：小灯举剑逼近，大胖低伏呼吸
+        (p) => {
+            const lx = 300 + p * 60;
+            $('little').setAttribute('transform', 'translate(' + lx + ' 0)');
+            setOp('sword', 1); setOp('lantern', 0);
+            raiseSword(0.4 + 0.3 * Math.sin(t * 1.6));
+            $('big').setAttribute('transform', 'translate(660 0) rotate(' + (0.02 + 0.02 * Math.sin(t * 1.2)) + ')');
+        },
+        // 6 激战：攻防回合——冲刺、举剑、劈砍命中怪兽、怪兽反击
+        (p) => {
+            const c = (t - ST[6]) % 1.5;
+            const prevC = lastC6;
+            lastC6 = c;
+            let lx, tilt = 0;
+            if (c < 0.5) {
+                lx = 300 + (c / 0.5) * 245;               // ① 冲刺逼近
+                runLegs(2.4);
+                setOp('sword', 0); setOp('lantern', 1);
+                $('lantern').setAttribute('transform', 'rotate(' + (Math.sin(t * 14) * 8) + ' 22 372)');
+            } else if (c < 0.62) {
+                lx = 545;                                  // ② 到位，举剑
+                raiseSword((c - 0.5) / 0.12);
+                setOp('sword', 1); setOp('lantern', 0);
+            } else if (c < 0.92) {
+                lx = 545;                                  // ③ 劈下——剑砍到怪兽身上！
+                swingSwordHit((c - 0.62) / 0.3);
+                setOp('sword', 1); setOp('lantern', 0);
+                tilt = 2;                                  // 怪兽受击后仰
+                if (prevC < 0.74 && c >= 0.74) {           // 剑尖触身瞬间（边沿触发一次）
+                    ring(600, 380, '#ffd98a');
+                    spark(600, 380, '#ff9d6e', 14, 70);
+                    spark(620, 350, '#ffd98a', 8, 50);
+                    quake();
+                }
+            } else {
+                lx = 545 - ((c - 0.92) / 0.58) * 160;      // ④ 怪兽反击，小灯后退
+                bossSwing((c - 0.92) / 0.58);
+                setOp('sword', 1); setOp('lantern', 0);
+                if (c >= 0.95 && c < 0.99) { spark(lx + 34, 400, '#ff5a3c', 6, 44); }
+            }
+            $('little').setAttribute('transform', 'translate(' + lx + ' 0)');
+            $('big').setAttribute('transform', 'translate(660 0) rotate(' + tilt + ')');
+            if (Math.random() < 0.18) { spark(340 + Math.random() * 280, 330 + Math.random() * 90, '#ff9d6e', 2, 30); }
+        },
+        // 7 真相：小灯缓缓走近、剑放下，大胖低头，红眼转蓝
+        (p) => {
+            const o = clamp(p * 2, 0, 1);
+            $('bEyeL').setAttribute('fill', o > 0.5 ? '#bfe3ff' : '#ff5a3c');
+            $('bEyeR').setAttribute('fill', o > 0.5 ? '#bfe3ff' : '#ff5a3c');
+            $('bMouth').setAttribute('opacity', 1 - o);
+            const lx = 320 + p * 130;
+            $('little').setAttribute('transform', 'translate(' + lx + ' 0)');
+            setOp('sword', 1); setOp('lantern', 0);
+            lowerSword(p);
+            $('big').setAttribute('transform', 'translate(660 0) rotate(' + (-p * 3) + ')');
+            if (Math.random() < 0.12) { spark(520 + Math.random() * 200, 300 + Math.random() * 120, '#bfe3ff', 1, 18); }
+        },
+        // 8 和解：灯笼举起照亮，大胖缓缓沉入化作光
+        (p) => {
+            const o = clamp(p * 1.6, 0, 1);
+            setOp('big', 1 - o);
+            $('big').setAttribute('transform', 'translate(660 0) rotate(' + (p * -5) + ')');
+            setOp('lantern', 1); setOp('sword', 0);
+            $('lantern').setAttribute('transform', 'rotate(' + (12 - p * 26) + ' 22 372)');
+            $('lArmB').setAttribute('transform', 'rotate(' + (-50 - p * 30) + ' 0 366)');
+            $('little').setAttribute('transform', 'translate(' + (330 + p * 70) + ' 0)');
+            if (Math.random() < 0.22) { spark(520 + Math.random() * 200, 380, '#ffd98a', 2, 26); }
+            if (p > 0.4) { $('bEyeL').setAttribute('fill', '#ffe9b0'); $('bEyeR').setAttribute('fill', '#ffe9b0'); }
+            if (p > 0.6) { spark(660, 420, '#ffd98a', 2, 44); }
+        },
+        // 9 清晨：天亮了，古镇苏醒，人们开始一天的生活
+        (p) => {
+            setOp('gDawn', clamp(p * 1.6, 0, 1));
+            // 太阳升起
+            $('sun').setAttribute('cy', 380 - p * 150);
+            // 扫街：手臂 + 扫帚摆动
+            const s1 = Math.sin(t * 4) * 10;
+            $('sArm').setAttribute('transform', 'rotate(' + s1 + ' 0 360)');
+            $('sBroom').setAttribute('transform', 'rotate(' + (s1 * 0.9) + ' 26 374)');
+            // 挑担：来回走 + 腿摆
+            const cxx = 430 + Math.sin(t * 0.7) * 60;
+            const s2 = Math.sin(t * 6) * 12;
+            $('folkCarry').setAttribute('transform', 'translate(' + cxx + ' 0)');
+            $('cLegA').setAttribute('transform', 'rotate(' + (-s2) + ' 0 398)');
+            $('cLegB').setAttribute('transform', 'rotate(' + s2 + ' 0 398)');
+            // 洗衣：手臂上下
+            const s3 = Math.sin(t * 3) * 9;
+            $('wArmA').setAttribute('transform', 'rotate(' + s3 + ' 0 390)');
+            $('wArmB').setAttribute('transform', 'rotate(' + (-s3) + ' 0 392)');
+            // 孩童：跑过老街
+            const kxx = 500 + ((t * 90) % 280);
+            const s4 = Math.sin(t * 14) * 14;
+            $('folkKid').setAttribute('transform', 'translate(' + kxx + ' 0)');
+            $('kLegA').setAttribute('transform', 'rotate(' + (-s4) + ' 0 416)');
+            $('kLegB').setAttribute('transform', 'rotate(' + s4 + ' 0 416)');
+            // 炊烟上飘
+            $('smoke').setAttribute('transform', 'translate(0 ' + (-((t * 9) % 44)) + ')');
+            // 塔顶的灯仍亮着（守护者的痕迹）
+            $('dawnTowerLight').setAttribute('opacity', 0.5 + 0.3 * Math.sin(t * 1.6));
+            // 晨光浮尘
+            if (Math.random() < 0.06) { spark(300 + Math.random() * 400, 180 + Math.random() * 160, '#ffe9b0', 1, 14); }
+        }
+    ];
+
+    // 🏃 跑动/走路：双腿交替摆动
+    function runLegs(spd) {
+        const s = Math.sin(t * 9 * spd) * 18;
+        $('lLegA').setAttribute('transform', 'rotate(' + (-s) + ' 0 400)');
+        $('lLegB').setAttribute('transform', 'rotate(' + s + ' 0 400)');
+    }
+    // ⚔️ 举剑（f 0→1 举高）
+    function raiseSword(f) {
+        const a = -70 - f * 30;
+        $('lArmB').setAttribute('transform', 'rotate(' + a + ' 0 366)');
+        $('sword').setAttribute('transform', 'rotate(' + (a - 12) + ' 24 368)');
+    }
+    // ⚔️ 劈砍命中（f 0→1 大力劈下，剑尖挥向怪兽）
+    function swingSwordHit(f) {
+        const a = -100 + f * 130;
+        $('lArmB').setAttribute('transform', 'rotate(' + a + ' 0 366)');
+        $('sword').setAttribute('transform', 'rotate(' + (a - 8) + ' 24 368)');
+    }
+    // ⚔️ 放下剑
+    function lowerSword(f) {
+        const a = 20 - f * 40;
+        $('lArmB').setAttribute('transform', 'rotate(' + a + ' 0 366)');
+        $('sword').setAttribute('transform', 'rotate(' + (a - 20) + ' 24 368)');
+    }
+    // 👹 怪兽挥臂反击（左臂扫向小灯）
+    function bossSwing(f) { $('bArmL').setAttribute('transform', 'rotate(' + (-f * 34) + ' -40 300)'); }
+
+    // ═══════════ 字幕 ═══════════
+    function updateSubtitle() {
+        let cur = null;
+        for (const L of LINES) { if (t >= L[0] && t < L[0] + L[1]) { cur = L[2]; break; } }
+        const el = $('subtitle');
+        if (cur !== lastLine) { lastLine = cur; el.textContent = cur || ''; el.style.opacity = cur ? 1 : 0; }
+    }
+
+    // ═══════════ 音效（Web Audio 氛围） ═══════════
+    function initAudio() {
+        try {
+            actx = new (window.AudioContext || window.webkitAudioContext)();
+            const g = actx.createGain(); g.gain.value = 0.045;
+            const f = actx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 300;
+            const o1 = actx.createOscillator(); o1.type = 'sine'; o1.frequency.value = 55;
+            const o2 = actx.createOscillator(); o2.type = 'sine'; o2.frequency.value = 55.6;
+            o1.connect(f); o2.connect(f); f.connect(g); g.connect(actx.destination);
+            o1.start(); o2.start();
+            drone = { g, f, o1, o2 };
+        } catch (e) { actx = null; }
+    }
+    function tone(freq, dur, vol, type) {
+        if (!actx) { return; }
+        const o = actx.createOscillator(); o.type = type || 'sine'; o.frequency.value = freq;
+        const g = actx.createGain();
+        g.gain.setValueAtTime(0, actx.currentTime);
+        g.gain.linearRampToValueAtTime(vol, actx.currentTime + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+        o.connect(g); g.connect(actx.destination);
+        o.start(); o.stop(actx.currentTime + dur + 0.1);
+    }
+    function onChapterAudio(i) {
+        if (!drone) { return; }
+        if (i === 6) { drone.f.frequency.value = 900; drone.g.gain.value = 0.075; }
+        else if (i === 7) { drone.f.frequency.value = 420; drone.g.gain.value = 0.055; }
+        else if (i === 8) { drone.f.frequency.value = 240; drone.g.gain.value = 0.05; tone(440, 1.2, 0.04); }
+        else if (i === 9) { drone.f.frequency.value = 150; drone.g.gain.value = 0.035; tone(880, 0.6, 0.02); tone(1100, 0.5, 0.015); }
+        else { drone.f.frequency.value = 300; drone.g.gain.value = 0.045; }
+    }
+    // 战斗鼓点
+    function battleTicks() {
+        if (tickTimer) { clearInterval(tickTimer); tickTimer = null; }
+        if (chapter === 6) {
+            tickTimer = setInterval(() => { if (chapter !== 6 || !playing) { return; } tone(90, 0.16, 0.05, 'triangle'); }, 480);
+        }
+    }
+
+    // ═══════════ 主循环 ═══════════
+    function frame(now) {
+        const dt = Math.min((now - last) / 1000, 0.06);
+        last = now;
+        if (playing) {
+            t += dt;
+            const i = chIndex();
+            if (i !== chapter) { onChapter(i); battleTicks(); }
+            const prog = clamp((t - ST[i]) / CHS[i].dur, 0, 1);
+            if (update[i]) { update[i](prog); }
+            updateSubtitle();
+            $('progress').style.width = (t / TOTAL * 100) + '%';
+            if (t >= TOTAL) {
+                playing = false;
+                $('pauseBtn').textContent = '▶ 播放';
+                $('endCard').classList.add('show');
+                if (tickTimer) { clearInterval(tickTimer); tickTimer = null; }
+                if (drone) { drone.g.gain.linearRampToValueAtTime(0.0001, actx.currentTime + 2); }
+            }
+        }
+        requestAnimationFrame(frame);
+    }
+
+    // ═══════════ 控制 ═══════════
+    function startMovie() {
+        $('poster').classList.add('hide');
+        initAudio();
+        if (actx) { actx.resume(); }
+        playing = true;
+        last = performance.now();
+        requestAnimationFrame(frame);
+    }
+    function togglePause() {
+        if (!playing && t >= TOTAL) { restart(); return; }
+        playing = !playing;
+        $('pauseBtn').textContent = playing ? '⏸ 暂停' : '▶ 播放';
+        if (playing) {
+            last = performance.now();
+            if (actx) { actx.resume(); }
+        } else if (actx) {
+            actx.suspend();
+        }
+    }
+    function restart() {
+        t = 0; lastLine = null; chapter = -1;
+        $('endCard').classList.remove('show');
+        $('progress').style.width = '0%';
+        $('subtitle').textContent = ''; $('subtitle').style.opacity = 0;
+        ['lLegA', 'lLegB', 'lArmA', 'lArmB', 'lantern', 'sword', 'bArmL', 'bArmR'].forEach(id => { $(id).setAttribute('transform', ''); });
+        $('sword').setAttribute('opacity', 0);
+        ['big', 'guardian', 'sword', 'lantern', 'little'].forEach(id => { const el = $(id); if (el) { el.style.opacity = ''; } });
+        lastC6 = -1;
+        $('guardian').setAttribute('transform', '');
+        $('guardian').setAttribute('opacity', 0);
+        $('little').setAttribute('transform', 'translate(250 0)');
+        $('big').setAttribute('transform', 'translate(660 0)');
+        $('big').setAttribute('opacity', 1);
+        $('bEyeL').setAttribute('fill', '#ff5a3c'); $('bEyeR').setAttribute('fill', '#ff5a3c');
+        $('bMouth').setAttribute('opacity', 1);
+        $('tower').setAttribute('transform', 'translate(640 0)');
+        if (tickTimer) { clearInterval(tickTimer); tickTimer = null; }
+        if (actx && drone) {
+            drone.g.gain.cancelScheduledValues(actx.currentTime);
+            drone.f.frequency.setValueAtTime(300, actx.currentTime);
+            drone.g.gain.setValueAtTime(0.045, actx.currentTime);
+            if (actx.state === 'suspended') { actx.resume(); }
+        }
+        playing = true;
+        $('pauseBtn').textContent = '⏸ 暂停';
+        last = performance.now();
+    }
+</script>
+</body>
+</html>
