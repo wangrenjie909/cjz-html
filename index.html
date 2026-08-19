@@ -477,6 +477,44 @@
         @keyframes carveDraw {
             to { stroke-dashoffset: 0; }
         }
+        /* ===== 🎮 体验小游戏 V2 ===== */
+        .exp-title { margin-bottom: 8px; }
+        .game-hint { font-size: 12px; color: #a8c6ff; margin: 4px 0 8px; line-height: 1.6; }
+        /* 河灯颜色选择 */
+        .lamp-colors { display: flex; gap: 8px; justify-content: center; margin: 8px 0; flex-wrap: wrap; }
+        .lamp-color { background: rgba(255,255,255,0.1); color: #f0f4ff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 10px; cursor: pointer; font-size: 13px; transition: transform .2s, box-shadow .2s, border-color .2s; }
+        .lamp-color:hover { transform: translateY(-2px); }
+        .lamp-color.active { border-color: transparent; }
+        .lamp-color.c-gold.active { background: linear-gradient(135deg,#b8860b,#ffd98a); box-shadow: 0 0 12px rgba(255,217,138,.6); }
+        .lamp-color.c-red.active { background: linear-gradient(135deg,#b03a2e,#ff8a70); box-shadow: 0 0 12px rgba(255,138,112,.6); }
+        .lamp-color.c-blue.active { background: linear-gradient(135deg,#2a5aa8,#7fd0ff); box-shadow: 0 0 12px rgba(127,208,255,.6); }
+        .wish-cards { display: flex; gap: 8px; justify-content: center; margin: 8px 0; flex-wrap: wrap; }
+        .wish-card { background: rgba(255,255,255,0.08); color: #f0f4ff; border: 1px dashed rgba(255,217,138,0.35); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: background .2s; }
+        .wish-card:hover { background: rgba(255,217,138,0.2); }
+        .wish-card.active { background: rgba(255,217,138,0.28); border-style: solid; }
+        #lampMsg { font-size: 12px; color: #ffd98a; min-height: 18px; margin: 6px 0 0; }
+        .lantern-boat { cursor: pointer; }
+        .lantern-boat.b-red .boat-lamp { filter: hue-rotate(-30deg) saturate(1.3); }
+        .lantern-boat.b-blue .boat-lamp { filter: hue-rotate(160deg); }
+        /* 夜巷找灯笼 */
+        .lane { position: relative; height: 150px; border-radius: 12px; overflow: hidden; margin: 10px 0; cursor: pointer; background: linear-gradient(180deg, #0a1430 0%, #13204a 60%, #0c1838 100%); }
+        .lane-bg { position: absolute; inset: 0; pointer-events: none; }
+        .lane-bg::before { content: ''; position: absolute; left: 8%; bottom: 8px; width: 18%; height: 36px; background: #0a1230; clip-path: polygon(0 100%, 0 30%, 50% 0, 100% 30%, 100% 100%); }
+        .lane-bg::after { content: ''; position: absolute; right: 10%; bottom: 8px; width: 22%; height: 42px; background: #0a1230; clip-path: polygon(0 100%, 0 35%, 50% 0, 100% 35%, 100% 100%); }
+        .lane-lamp { position: absolute; font-size: 24px; cursor: pointer; filter: grayscale(0.9) brightness(0.5); transition: transform .25s, filter .25s; user-select: none; }
+        .lane-lamp:hover { transform: scale(1.25); }
+        .lane-lamp.lit { filter: none; animation: lanternGlow 1s infinite alternate; }
+        .lane-time { position: absolute; top: 6px; right: 10px; color: #ffd98a; font-size: 13px; }
+        /* 刀具工坊 */
+        .tool-belt { display: flex; gap: 8px; justify-content: center; margin: 8px 0; flex-wrap: wrap; }
+        .tool-btn { background: rgba(255,255,255,0.1); color: #f0f4ff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 10px; cursor: pointer; font-size: 12px; transition: transform .2s, background .2s; }
+        .tool-btn:hover { transform: translateY(-2px); }
+        .tool-btn.active { background: linear-gradient(90deg,#ff9d6e,#e8552d); border-color: transparent; }
+        /* 烟火 / 流星粒子 */
+        .fx-burst { position: fixed; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; z-index: 999; animation: burstFly .9s ease-out forwards; }
+        @keyframes burstFly { from { opacity: 1; } to { opacity: 0; transform: translate(var(--bx), var(--by)) scale(.2); } }
+        .fx-star { position: fixed; font-size: 22px; pointer-events: none; z-index: 999; animation: starUp 1.2s ease-out forwards; }
+        @keyframes starUp { from { opacity: 1; transform: translate(0,0); } to { opacity: 0; transform: translate(0,-90px) scale(1.4); } }
         .tour-timeline {
             display: flex;
             align-items: center;
@@ -687,6 +725,25 @@
         }
         #startBtn:hover { transform: scale(1.05); }
         #startBtn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+        /* 绝杀条与巨刃光弧 */
+        .ultbar-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 14px; }
+        .ultbar-fill { background: linear-gradient(90deg, #7a4fd0, #b08cff); }
+        .ultbar-row.full .ultbar-fill { animation: ultReady 1s ease-in-out infinite; }
+        @keyframes ultReady { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.7); } }
+        #ultBtn2 { transition: transform .2s, box-shadow .2s, background .2s; }
+        #ultBtn2.ready { background: linear-gradient(90deg, #b08cff, #7a4fd0); box-shadow: 0 0 14px rgba(176,140,255,.8); animation: ultReady 1s ease-in-out infinite; }
+        /* 难度选择 */
+        .diff-select { display: flex; gap: 8px; justify-content: center; align-items: center; margin: 0 0 12px; flex-wrap: wrap; }
+        .diff-label { font-size: 13px; color: #a8c6ff; }
+        .diff-btn { background: rgba(255,255,255,0.1); color: #f0f4ff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 10px; cursor: pointer; font-size: 13px; transition: transform .2s, box-shadow .2s; }
+        .diff-btn:hover { transform: translateY(-2px); }
+        .diff-btn.active { border-color: transparent; }
+        .diff-btn[data-diff="normal"].active { background: linear-gradient(135deg,#1e6b5a,#4ecdc4); box-shadow: 0 0 12px rgba(78,205,196,.5); }
+        .diff-btn[data-diff="hell"].active { background: linear-gradient(135deg,#8e1f14,#ff5a3c); box-shadow: 0 0 12px rgba(255,90,60,.6); }
+        .ult-arc { fill: none; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 400; stroke-dashoffset: 400; animation: ultArc .35s ease-out forwards; }
+        @keyframes ultArc { 55% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+        .ult-ring { position: absolute; border: 4px solid var(--rc); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; animation: ultRing .6s ease-out forwards; }
+        @keyframes ultRing { from { width: 16px; height: 16px; opacity: 1; } to { width: 230px; height: 230px; opacity: 0; } }
         /* 升级与回血 */
         .xp-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 14px; }
         .xp-fill { background: linear-gradient(90deg, #b8860b, #ffd98a); }
@@ -775,33 +832,61 @@
             </div>
 
             <div class="exp-panel" id="exp-stone">
-                <p class="exp-title">🦶 踩过青石板，把它们一块块点亮！</p>
+                <p class="exp-title">🦶 限时点灯！30 秒点亮整条老街</p>
+                <p class="game-hint">点击点亮石板；风会吹灭已亮的石板（每次点亮后有几率被吹灭一块）</p>
                 <div class="stone-row" id="stoneRow"></div>
-                <p id="stoneCount">已点亮 0 / 10 块石板</p>
+                <p id="stoneCount">⏱ 点击「开始挑战」倒计时</p>
+                <p><button onclick="startStoneGame()">🕯️ 开始挑战</button></p>
             </div>
 
             <div class="exp-panel" id="exp-bridge">
-                <p class="exp-title">🌉 在小桥边放一盏河灯，许个愿吧！</p>
-                <input id="wishInput" class="wish-input" type="text" maxlength="20" placeholder="写下你的心愿……">
+                <p class="exp-title">🌉 选一盏河灯，许愿放走它！</p>
+                <p class="game-hint">点「放河灯」后，再点一下飘走的灯 = 心愿化作流星 ✨</p>
+                <div class="lamp-colors">
+                    <button class="lamp-color c-gold active" data-c="gold" onclick="selectLampColor('gold')">🟡 金灯</button>
+                    <button class="lamp-color c-red" data-c="red" onclick="selectLampColor('red')">🔴 红灯</button>
+                    <button class="lamp-color c-blue" data-c="blue" onclick="selectLampColor('blue')">🔵 蓝灯</button>
+                </div>
+                <div class="wish-cards">
+                    <button class="wish-card active" onclick="pickWish('平安喜乐')">🍀 平安喜乐</button>
+                    <button class="wish-card" onclick="pickWish('早日暴富')">💰 早日暴富</button>
+                    <button class="wish-card" onclick="pickWish('考试满分')">📚 考试满分</button>
+                    <button class="wish-card" onclick="pickWish('全家安康')">🏠 全家安康</button>
+                </div>
+                <input id="wishInput" class="wish-input" type="text" maxlength="20" placeholder="或者自己写心愿……">
                 <div class="river" id="river"></div>
                 <p><button onclick="launchLantern()">🏮 放河灯</button></p>
+                <p id="lampMsg">🍀 已选心愿「平安喜乐」</p>
             </div>
 
             <div class="exp-panel" id="exp-lantern">
-                <p class="exp-title">🏮 一盏一盏，点亮夜巷的灯笼！</p>
-                <div class="lantern-row" id="lanternRow"></div>
-                <p id="lanternCount">已点亮 0 / 8 盏</p>
+                <p class="exp-title">🏮 夜巷找灯笼！灯笼藏在巷子里</p>
+                <p class="game-hint">找到并点亮全部 8 盏；点错（点到巷子）会扣 2 秒</p>
+                <div class="lane" id="lane">
+                    <div class="lane-bg"></div>
+                    <div id="laneLights"></div>
+                    <span class="lane-time" id="laneTime">⏱ -- 秒</span>
+                </div>
+                <p id="lanternCount">找到 0 / 8 盏</p>
+                <p><button onclick="startLaneGame()">🏮 开始找灯笼</button></p>
             </div>
 
             <div class="exp-panel" id="exp-wood">
-                <p class="exp-title">🪵 在老爷爷的木雕铺，一刀一刀刻出小鱼</p>
+                <p class="exp-title">🪵 木雕工坊：选对刻刀，按顺序刻出小鱼</p>
+                <p class="game-hint">顺序：粗刀刻鱼身 → 细刀刻鱼尾 → 圆刀刻鱼鳍 → 刻针点睛</p>
+                <div class="tool-belt">
+                    <button class="tool-btn" data-tool="coarse" onclick="selectTool('coarse')">🔪 粗刀</button>
+                    <button class="tool-btn" data-tool="fine" onclick="selectTool('fine')">✂️ 细刀</button>
+                    <button class="tool-btn" data-tool="round" onclick="selectTool('round')">🔘 圆刀</button>
+                    <button class="tool-btn" data-tool="needle" onclick="selectTool('needle')">📌 刻针</button>
+                </div>
                 <svg id="carving" viewBox="0 0 220 130" aria-label="木雕小鱼">
                     <path class="carve-stroke" id="carve1" d="M40 70 Q90 30 150 50 Q180 62 160 85 Q130 105 90 95 Q45 88 40 70 Z" stroke="#d9a05b" stroke-width="4" fill="none" stroke-linecap="round"/>
                     <path class="carve-stroke" id="carve2" d="M150 55 Q180 40 195 60 L175 80 Q165 65 150 70" stroke="#d9a05b" stroke-width="4" fill="none" stroke-linecap="round"/>
                     <path class="carve-stroke" id="carve3" d="M85 60 Q95 42 115 40 Q102 55 100 68" stroke="#d9a05b" stroke-width="3" fill="none" stroke-linecap="round"/>
                     <circle class="carve-stroke" id="carve4" cx="95" cy="72" r="4" stroke="#d9a05b" stroke-width="3" fill="none"/>
                 </svg>
-                <p id="carveMsg">还差 4 刀……</p>
+                <p id="carveMsg">第 1 步：选「🔪 粗刀」，点「刻一刀」</p>
                 <p><button onclick="carveOnce()">🔨 刻一刀</button></p>
             </div>
         </section>
@@ -1022,27 +1107,38 @@
                     <div class="hp-row">
                         <span class="hp-name" id="playerName">🧍 战士</span>
                         <div class="bar"><div id="playerFill" class="fill player-fill"></div></div>
-                        <span class="hp-num" id="playerHpNum">12/12</span>
+                        <span class="hp-num" id="playerHpNum">80/80</span>
                     </div>
                     <div class="xp-row">
                         <span class="hp-name" id="levelTag">Lv.1</span>
                         <div class="bar"><div id="xpFill" class="fill xp-fill"></div></div>
                         <span class="hp-num" id="xpNum">0/10</span>
                     </div>
+                    <div class="ultbar-row" id="ultbarRow">
+                        <span class="hp-name">🔱 绝杀</span>
+                        <div class="bar"><div id="ultBarFill" class="fill ultbar-fill"></div></div>
+                        <span class="hp-num" id="ultBarNum">0/100</span>
+                    </div>
                     <div class="hp-row" id="bossHpRow" style="display:none">
                         <span class="hp-name">👹 镇塔魔尊</span>
                         <div class="bar"><div id="monsterFill" class="fill monster-fill"></div></div>
-                        <span class="hp-num" id="monsterHpNum">60/60</span>
+                        <span class="hp-num" id="monsterHpNum">220/220</span>
                     </div>
 
+                    <div class="diff-select">
+                        <span class="diff-label">🌗 难度</span>
+                        <button class="diff-btn active" data-diff="normal" onclick="selectDiff('normal')">😊 普通</button>
+                        <button class="diff-btn" data-diff="hell" onclick="selectDiff('hell')">😈 地狱</button>
+                    </div>
                     <div class="elements" id="eleSelect">
                         <button class="ele-btn" data-ele="ice" onclick="selectEle('ice')">❄️ 冰灵·小凛</button>
                         <button class="ele-btn" data-ele="fire" onclick="selectEle('fire')">🔥 火灵·小焱</button>
                         <button class="ele-btn" data-ele="wood" onclick="selectEle('wood')">🌿 木灵·小森</button>
                     </div>
 
-                    <p class="fight-hint"><b>键盘：</b>←→ / A D 跑动 · W / 空格 跳跃 · J 普攻（空中=飞踢）· K 大招<br>
-                    <b>大招：</b>❄️ 冰霜新星（冻结全场）· 🔥 烈焰冲击（灼烧）· 🌿 自然之怒（缠绕+回血）</p>
+                    <p class="fight-hint"><b>键盘：</b>←→ / A D 跑动 · W / 空格 跳跃 · J 普攻（空中=飞踢）· K 大招 · L 绝杀<br>
+                    <b>大招：</b>❄️ 冰霜新星（冻结全场）· 🔥 烈焰冲击（灼烧）· 🌿 自然之怒（缠绕+回血）<br>
+                    <b>🔱 绝杀：</b>攻击攒能量，满 100 按 L —— 大砍刀劈落！冰=蓝 / 火=红 / 木=绿</p>
 
                     <div class="move-row">
                         <button class="move-btn" onmousedown="holdMove(-1)" onmouseup="holdMove(0)" onmouseleave="holdMove(0)" ontouchstart="holdMove(-1)" ontouchend="holdMove(0)">◀</button>
@@ -1050,6 +1146,7 @@
                         <button class="move-btn" onclick="doJump()">⬆ 跳</button>
                         <button class="move-btn skill" onclick="doAttack()">⚔ 攻</button>
                         <button class="move-btn skill skill-btn" id="ultBtn" onclick="doUlt()">✦ 大招</button>
+                        <button class="move-btn skill skill-btn" id="ultBtn2" onclick="doUltimate()">🔱 绝杀</button>
                     </div>
                     <div id="skillCdText"></div>
 
@@ -1131,23 +1228,43 @@
 
         // 🥊 火柴人 vs 怪兽格斗！
         // ⚔️❄️🔥🌿 元素大战：冰 / 火 / 木 —— 实时跑动格斗（Boss 战）
-        const PLAYER_MAX = 12;
-        const BOSS_MAX = 60;
+        const PLAYER_MAX = 80;
+        // 🌗 难度配置（普通 / 地狱）
+        const DIFF = {
+            normal: {
+                bossHp: 120, minionHp: 20, atk: 4, skillDmg: 6, ultDmg: 10,
+                minionDmg: 2, minionSpeed: 34, minionRage: 2.2,
+                bossPunch: [2, 3], bossBreath: [3, 4], bossCharge: 4,
+                bossSpeed: [55, 95], breathCd: [1.4, 0.9], chargeCd: 5.5,
+                ragePct: 0.4, regen: [2.2, 1.5], regenAmt: [2, 3], hurtInv: 0.8
+            },
+            hell: {
+                bossHp: 220, minionHp: 40, atk: 6, skillDmg: 10, ultDmg: 15,
+                minionDmg: 8, minionSpeed: 44, minionRage: 2.4,
+                bossPunch: [8, 12], bossBreath: [10, 16], bossCharge: 16,
+                bossSpeed: [70, 115], breathCd: [1.0, 0.7], chargeCd: 4,
+                ragePct: 0.5, regen: [1.8, 1.2], regenAmt: [3, 5], hurtInv: 0.5
+            }
+        };
+        let difficulty = 'normal';
+        let bossMax = DIFF.normal.bossHp;
+        let CFG = null;                 // 当前局难度快照（开局锁定，战斗内不变）
+        const D = () => DIFF[difficulty];
         const ELEMENTS = {
             ice: {
-                name: '冰灵·小凛', icon: '❄️', color: '#7fd0ff', dark: '#2a5aa8',
-                atk: 3, speed: 155,
-                skill: { name: '冰霜新星', dmg: 6, cd: 5, txt: '冻结所有敌人 2 秒！' }
+                name: '冰灵·小凛', icon: '❄️', color: '#7fd0ff', dark: '#2a5aa8', ultColor: '#7fd0ff',
+                atk: 6, speed: 155,
+                skill: { name: '冰霜新星', dmg: 10, cd: 5, txt: '冻结所有敌人 2 秒！' }
             },
             fire: {
-                name: '火灵·小焱', icon: '🔥', color: '#ff9d6e', dark: '#c0392b',
-                atk: 3, speed: 155,
-                skill: { name: '烈焰冲击', dmg: 8, cd: 5, txt: '灼烧敌人，4 秒内持续掉血！' }
+                name: '火灵·小焱', icon: '🔥', color: '#ff9d6e', dark: '#c0392b', ultColor: '#ff5a3c',
+                atk: 6, speed: 155,
+                skill: { name: '烈焰冲击', dmg: 10, cd: 5, txt: '灼烧敌人，4 秒内持续掉血！' }
             },
             wood: {
-                name: '木灵·小森', icon: '🌿', color: '#7ee0a0', dark: '#1e6b3a',
-                atk: 3, speed: 155,
-                skill: { name: '自然之怒', dmg: 5, cd: 5, txt: '缠绕敌人 2 秒，并为自身回复 5 点体力！' }
+                name: '木灵·小森', icon: '🌿', color: '#7ee0a0', dark: '#1e6b3a', ultColor: '#7ee0a0',
+                atk: 6, speed: 155,
+                skill: { name: '自然之怒', dmg: 10, cd: 5, txt: '缠绕敌人 2 秒，并为自身回复 5 点体力！' }
             }
         };
 
@@ -1171,6 +1288,8 @@
         let walkPhase = 0, bossWalkPhase = 0; // 🚶 行走关节动画相位
         let attacking = false;
         let casting = false;              // ✨ 大招施法动作中（手脚挥动，暂停走路摆动）
+        let ultBar = 0;                   // 🔱 绝杀能量 0-100
+        let ultUses = 5;                  // 🔱 绝杀次数（每局 5 次）
         let jumpFxT = 0;                  // 🦘 空中拖尾粒子计时器
         let fightWins = 0;
         try { fightWins = parseInt(localStorage.getItem('fightWins') || '0'); } catch (e) {}
@@ -1309,6 +1428,19 @@
             if (aura) { aura.setAttribute('fill', E.color); }
             const weapon = document.getElementById('weapon');
             if (weapon) { weapon.style.filter = 'drop-shadow(0 0 4px ' + E.color + ')'; }
+        }
+
+        // 🌗 切换难度（普通 / 地狱）
+        function selectDiff(d) {
+            difficulty = d;
+            document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.dataset.diff === d));
+            if (!fighting && !gameOver) {
+                bossMax = D().bossHp;
+                document.getElementById('monsterHpNum').textContent = bossHp + '/' + bossMax;
+                log(d === 'hell' ? '😈 地狱难度！怪兽更强更凶，跳跃躲冲锋是保命关键！' : '😊 普通难度，轻松游玩～');
+            } else {
+                log(d === 'hell' ? '😈 已切换地狱难度（下一局生效）' : '😊 已切换普通难度（下一局生效）');
+            }
         }
 
         function selectEle(id) {
@@ -1464,7 +1596,7 @@
             document.getElementById('minion' + m.i).style.display = 'none';
             spawnParticles(m.x, 180, '#9a9aa4', 16, 120);
             // 💚 击杀回血 + 📈 经验
-            const heal = Math.min(2, maxHp - playerHp);
+            const heal = Math.min(6, maxHp - playerHp);
             playerHp += heal;
             if (heal > 0) { spawnDmg(playerX, 80, '+' + heal, '#7ee0a0', false); }
             updateBars();
@@ -1492,7 +1624,7 @@
                     bossHp = 0;
                     updateBars();
                     endFight(true);
-                } else if (bossHp <= BOSS_MAX * 0.3 && bossAI && !bossAI.rage) {
+                } else if (bossHp <= bossMax * CFG.ragePct && bossAI && !bossAI.rage) {
                     bossAI.rage = true;
                     document.getElementById('bossAura').classList.add('on');
                     shake(true);
@@ -1501,14 +1633,14 @@
                 }
                 // ⚡ 受击反击：怒气上涌，下一次吐息来得更快
                 if (bossAI && bossAI.state !== 'charge') {
-                    bossAI.cd = Math.max(0.3, (bossAI.cd || 0) - 0.35);
+                    bossAI.cd = Math.max(0.45, (bossAI.cd || 0) - 0.35);
                 }
             }
         }
 
         // ⚔️ 普攻
         function doAttack() {
-            if (gameOver || atkCd > 0 || !ele || !fighting) { return; }
+            if (gameOver || atkCd > 0 || !ele || !fighting || attacking || casting) { return; }
             if (isJumping) { doKick(); return; }
             attacking = true;
             atkCd = 0.4;
@@ -1570,6 +1702,7 @@
                     combo++;
                     comboTimer = 2.5;
                     updateComboUI();
+                    gainUlt(8);
                     log('⚔️ 命中！造成 ' + dmg + ' 点伤害' + (crit ? ' 暴击！' : ''));
                 } else {
                     spawnParticles(playerX + 30, 150, '#a8c6ff', 4, 40);
@@ -1618,6 +1751,7 @@
                 combo++;
                 comboTimer = 2.5;
                 updateComboUI();
+                gainUlt(8);
                 log('🦵 空中飞踢！一脚踢中 ' + (t.kind === 'boss' ? '镇塔魔尊' : '岩甲兽') + '，造成 ' + dmg + ' 点伤害！');
             } else {
                 log('🦵 飞踢落空！');
@@ -1670,12 +1804,13 @@
         }
 
         function doUlt() {
-            if (!ele || !fighting || gameOver) { return; }
+            if (!ele || !fighting || gameOver || attacking || casting) { return; }
             if (ultCd > 0) { log('✦ 大招还在冷却中！'); return; }
             const E = ELEMENTS[ele];
             ultCd = E.skill.cd;
             ultCdMax = E.skill.cd;
             updateUltUI();
+            gainUlt(15);
             const t = nearestEnemy();
             shake(true);
             // ✨ 施法动作：手脚挥动 + 身体发功光效
@@ -1791,11 +1926,152 @@
             }
         }
 
+        // 🔱 绝杀能量条
+        function updateUltBarUI() {
+            document.getElementById('ultBarFill').style.width = Math.min(100, ultBar) + '%';
+            document.getElementById('ultBarNum').textContent = Math.floor(ultBar) + '/100';
+            const ready = ultBar >= 100 && ultUses > 0;
+            document.getElementById('ultbarRow').classList.toggle('full', ready);
+            const btn = document.getElementById('ultBtn2');
+            btn.classList.toggle('ready', ready);
+            btn.textContent = '🔱 绝杀 ×' + ultUses;
+        }
+        function gainUlt(n) {
+            if (!fighting || gameOver) { return; }
+            ultBar = Math.min(100, ultBar + n);
+            updateUltBarUI();
+        }
+        // 🔱 绝杀巨刃（元素色发光砍刀）
+        function setUltWeapon(E) {
+            const g = document.getElementById('weapon');
+            g.innerHTML = '<path d="M132 112 L148 56 Q160 38 180 44 L166 86 Q156 104 142 108 Z" fill="' + E.ultColor + '" stroke="#ffffff" stroke-width="2" opacity="0.95"/>';
+            g.style.filter = 'drop-shadow(0 0 14px ' + E.ultColor + ')';
+        }
+        function ringBig(x, y, color) {
+            const layer = document.getElementById('fxLayer');
+            const r = document.createElement('span');
+            r.className = 'ult-ring';
+            r.style.setProperty('--rc', color);
+            const pos = px(x, y);
+            r.style.left = pos.x;
+            r.style.top = pos.y;
+            layer.appendChild(r);
+            setTimeout(() => r.remove(), 650);
+        }
+        // 🔱 绝杀：大砍刀劈落 + 元素色特效（冰蓝 / 火红 / 木绿）
+        function doUltimate() {
+            if (!ele || !fighting || gameOver || attacking || casting) { return; }
+            if (ultUses <= 0) { log('🔱 绝杀次数已用完（每局 5 次）！'); return; }
+            if (ultBar < 100) { log('🔱 绝杀能量还差 ' + Math.ceil(100 - ultBar) + '，继续攻击攒能量！'); return; }
+            ultBar = 0;
+            ultUses--;
+            updateUltBarUI();
+            attacking = true;
+            const ep = fightEpoch;
+            const E = ELEMENTS[ele];
+            const f = document.getElementById('fighter');
+            const arm = document.getElementById('arm');
+            const arm2 = document.getElementById('arm2');
+            const weapon = document.getElementById('weapon');
+            setUltWeapon(E);
+            // ① 举刀蓄力
+            f.classList.remove('attacking');
+            void f.getBoundingClientRect();
+            f.classList.add('attacking');
+            setFighterFace('angry');
+            arm.setAttribute('transform', 'rotate(-165 105 100)');
+            arm2.setAttribute('transform', 'rotate(165 105 106)');
+            weapon.setAttribute('transform', 'rotate(-40 132 112)');
+            spawnParticles(playerX, 120, E.ultColor, 14, 70);
+            const colorName = ele === 'ice' ? '冰蓝' : ele === 'fire' ? '炽红' : '翠绿';
+            log('🔱 绝杀！大砍刀凝聚' + colorName + '之力……');
+            // ② 劈下 + 巨刃光弧
+            setTimeout(() => {
+                if (gameOver || ep !== fightEpoch) {
+                    attacking = false;
+                    setWeaponGraphic(ele);
+                    f.classList.remove('attacking');
+                    arm.setAttribute('transform', '');
+                    arm2.setAttribute('transform', '');
+                    weapon.setAttribute('transform', '');
+                    return;
+                }
+                arm.setAttribute('transform', 'rotate(-15 105 100)');
+                arm2.setAttribute('transform', 'rotate(0 105 106)');
+                weapon.setAttribute('transform', 'rotate(45 132 112)');
+                const t = nearestEnemy();
+                const svg = document.getElementById('arenaSvg');
+                const ns = 'http://www.w3.org/2000/svg';
+                const arc = document.createElementNS(ns, 'path');
+                const tx = t ? t.x : playerX + 150;
+                arc.setAttribute('d', 'M' + playerX + ' 110 Q ' + ((playerX + tx) / 2) + ' 18 ' + tx + ' 122');
+                arc.setAttribute('stroke', E.ultColor);
+                arc.setAttribute('class', 'ult-arc');
+                svg.appendChild(arc);
+                setTimeout(() => arc.remove(), 400);
+                shake(true);
+                // ③ 命中：AOE 全部敌人 + 元素附加
+                setTimeout(() => {
+                    if (gameOver || ep !== fightEpoch) {
+                        attacking = false;
+                        setWeaponGraphic(ele);
+                        f.classList.remove('attacking');
+                        arm.setAttribute('transform', '');
+                        arm2.setAttribute('transform', '');
+                        weapon.setAttribute('transform', '');
+                        return;
+                    }
+                    const dmg = CFG.ultDmg;
+                    const targets = enemyTargets();
+                    targets.forEach(tgt => {
+                        damageEnemy(tgt, dmg, true);
+                        spawnDmg(tgt.x, 140, '-' + dmg, E.ultColor, true);
+                        flash(tgt.el);
+                        ringBig(tgt.x, 150, E.ultColor);
+                        if (ele === 'ice') {
+                            // ❄️ 冻结 1 秒
+                            if (tgt.kind === 'minion') { minions[tgt.i].freeze = 1; tgt.el.classList.add('frozen'); setTimeout(() => tgt.el.classList.remove('frozen'), 1000); }
+                            else { bossAI.freeze = 1; tgt.el.classList.add('frozen'); setTimeout(() => tgt.el.classList.remove('frozen'), 1000); }
+                        } else if (ele === 'fire') {
+                            // 🔥 灼烧 4 秒
+                            for (let k = 1; k <= 4; k++) {
+                                setTimeout(() => {
+                                    if (gameOver || ep !== fightEpoch) { return; }
+                                    const alive = tgt.kind === 'minion' ? minions[tgt.i].alive : (phase === 'boss');
+                                    if (!alive) { return; }
+                                    if (tgt.kind === 'minion') { const m = minions[tgt.i]; m.hp -= 1; if (m.hp <= 0) { killMinion(m); } }
+                                    else { bossHp = Math.max(0, bossHp - 1); updateBars(); if (bossHp <= 0) { endFight(true); return; } }
+                                    spawnDmg(tgt.x, 140, '-1', '#ff9d6e', false);
+                                    flash(tgt.el);
+                                }, k * 500);
+                            }
+                        }
+                    });
+                    // 🌿 木系绝杀附加：一次性回复 12（不随命中目标数翻倍）
+                    if (ele === 'wood') {
+                        const heal = Math.min(12, maxHp - playerHp);
+                        playerHp += heal; updateBars();
+                        if (heal > 0) { spawnDmg(playerX, 80, '+' + heal, '#7ee0a0', false); }
+                    }
+                    spawnParticles(playerX, 130, E.ultColor, 32, 190);
+                    log('🔱 绝杀命中！大砍刀劈出 ' + dmg + ' 点伤害' + (targets.length > 1 ? '，波及 ' + targets.length + ' 个敌人！' : '！'));
+                    // 收势复位
+                    arm.setAttribute('transform', '');
+                    arm2.setAttribute('transform', '');
+                    weapon.setAttribute('transform', '');
+                    setWeaponGraphic(ele);
+                    f.classList.remove('attacking');
+                    setFighterFace('normal');
+                    attacking = false;
+                }, 450);
+            }, 250);
+        }
+
         // 🤕 玩家受击
         function hurtPlayer(dmg, fromX, reason) {
             if (hurtInv > 0 || gameOver) { return; }
             playerHp = Math.max(0, playerHp - dmg);
-            hurtInv = 0.8;
+            hurtInv = CFG.hurtInv;
             document.getElementById('fighterMove').classList.add('inv-blink');
             setFighterFace('hurt');
             spawnDmg(playerX, 90, '-' + dmg, '#ff6b6b', true);
@@ -1816,7 +2092,7 @@
                 const rage = m.rageT > 0;
                 if (m.rageT > 0) { m.rageT -= dt; }
                 const dir = playerX > m.x ? 1 : -1;
-                m.x += dir * 34 * (rage ? 2.2 : 1) * dt;
+                m.x += dir * CFG.minionSpeed * (rage ? CFG.minionRage : 1) * dt;
                 m.x = Math.max(200, Math.min(365, m.x));
                 document.getElementById('minion' + m.i).setAttribute('transform', 'translate(' + m.x + ' 0)');
                 // 🦵 小怪腿部关节摆动
@@ -1830,7 +2106,7 @@
                 m.cd -= dt;
                 if (Math.abs(playerX - m.x) < 46 && m.cd <= 0) {
                     m.cd = 1.2;
-                    hurtPlayer(1, m.x, '🪨 岩甲兽撞了过来！受到 1 点伤害！');
+                    hurtPlayer(CFG.minionDmg, m.x, '🪨 岩甲兽撞了过来！受到 ' + CFG.minionDmg + ' 点伤害！');
                 }
             });
         }
@@ -1839,15 +2115,15 @@
         function updateBoss(dt) {
             if (phase !== 'boss' || !bossAI) { return; }
             if (bossAI.freeze > 0) { bossAI.freeze -= dt; return; }
-            const speed = bossAI.rage ? 95 : 55;
+            const speed = bossAI.rage ? CFG.bossSpeed[1] : CFG.bossSpeed[0];
             // 🩸 再生：Boss 缓慢回血（狂暴时更快）
             bossAI.regen = (bossAI.regen || 0) - dt;
             if (bossAI.regen <= 0) {
-                bossAI.regen = bossAI.rage ? 1.5 : 2.2;
-                if (bossHp < BOSS_MAX) {
-                    bossHp = Math.min(BOSS_MAX, bossHp + (bossAI.rage ? 2 : 1));
+                bossAI.regen = bossAI.rage ? CFG.regen[1] : CFG.regen[0];
+                if (bossHp < bossMax) {
+                    bossHp = Math.min(bossMax, bossHp + (bossAI.rage ? CFG.regenAmt[1] : CFG.regenAmt[0]));
                     updateBars();
-                    spawnDmg(bossX, 130, '+' + (bossAI.rage ? 2 : 1), '#ff5a3c', false);
+                    spawnDmg(bossX, 130, '+' + (bossAI.rage ? CFG.regenAmt[1] : CFG.regenAmt[0]), '#ff5a3c', false);
                 }
             }
             // 🦵 移动时四肢关节摆动
@@ -1873,17 +2149,17 @@
                 bossX += dir * speed * dt;
                 bossX = Math.max(210, Math.min(360, bossX));
                 if (Math.abs(playerX - bossX) < 50) {
-                    hurtPlayer(bossAI.rage ? 2 : 1, bossX, '👹 镇塔魔尊挥拳砸来！受到 ' + (bossAI.rage ? 2 : 1) + ' 点伤害！');
+                    hurtPlayer(bossAI.rage ? CFG.bossPunch[1] : CFG.bossPunch[0], bossX, '👹 镇塔魔尊挥拳砸来！受到 ' + (bossAI.rage ? CFG.bossPunch[1] : CFG.bossPunch[0]) + ' 点伤害！');
                 }
                 if (Math.abs(playerX - bossX) < 95) {
                     bossAI.state = 'attack';
-                    bossAI.cd = 1.2;
+                    bossAI.cd = 1.0;
                 }
             } else if (bossAI.state === 'attack') {
                 bossAI.cd -= dt;
                 if (bossAI.cd <= 0) {
                     bossBreath();
-                    bossAI.cd = bossAI.rage ? 0.9 : 1.4;
+                    bossAI.cd = bossAI.rage ? CFG.breathCd[1] : CFG.breathCd[0];
                 }
                 bossAI.chargeCd -= dt;
                 if (bossAI.chargeCd <= 0) {
@@ -1899,13 +2175,13 @@
                 bossX += dir * 240 * dt;
                 bossX = Math.max(200, Math.min(365, bossX));
                 bossAI.chargeT -= dt;
-                if (Math.abs(playerX - bossX) < 55 && hurtInv <= 0) {
-                    hurtPlayer(3, bossX, '⚡ 被冲锋撞飞！受到 3 点伤害！');
+                if (Math.abs(playerX - bossX) < 55 && hurtInv <= 0 && !isJumping) {
+                    hurtPlayer(CFG.bossCharge, bossX, '⚡ 被冲锋撞飞！受到 ' + CFG.bossCharge + ' 点伤害！');
                 }
                 if (bossAI.chargeT <= 0) {
                     bossAI.state = 'attack';
                     bossAI.cd = 1.0;
-                    bossAI.chargeCd = 5.5;
+                    bossAI.chargeCd = CFG.chargeCd;
                 }
             }
             document.getElementById('bossMove').setAttribute('transform', 'translate(' + (bossX - 300) + ' 0)');
@@ -1932,7 +2208,7 @@
             document.getElementById('bossArmL').setAttribute('transform', 'rotate(45 256 134)');
             document.getElementById('bossArmR').setAttribute('transform', 'rotate(-45 344 134)');
             if (!isJumping && Math.abs(playerX - bossX) < 120) {
-                hurtPlayer(bossAI.rage ? 3 : 2, bossX, '🔥 被烈焰吐息击中！受到 ' + (bossAI.rage ? 3 : 2) + ' 点伤害！');
+                hurtPlayer(bossAI.rage ? CFG.bossBreath[1] : CFG.bossBreath[0], bossX, '🔥 被烈焰吐息击中！受到 ' + (bossAI.rage ? CFG.bossBreath[1] : CFG.bossBreath[0]) + ' 点伤害！');
             } else if (!isJumping) {
                 log('🔥 镇塔魔尊喷出烈焰吐息！');
             }
@@ -1942,8 +2218,8 @@
         // 👹 Boss 入场
         function spawnBoss() {
             phase = 'boss';
-            bossHp = BOSS_MAX;
-            bossAI = { state: 'enter', cd: 0, chargeCd: 4, chargeT: 0, freeze: 0, rage: false, regen: 2 };
+            bossHp = bossMax;
+            bossAI = { state: 'enter', cd: 0, chargeCd: CFG.chargeCd, chargeT: 0, freeze: 0, rage: false, regen: CFG.regen[0] };
             bossX = 460;
             document.getElementById('bossMove').setAttribute('transform', 'translate(160 0)');
             document.getElementById('bossHpRow').style.display = '';
@@ -1979,14 +2255,14 @@
             }
             updateXpUI();
         }
-        function curAtk() { return ELEMENTS[ele].atk + (level - 1); }
-        function curSkillDmg() { return ELEMENTS[ele].skill.dmg + (level - 1); }
+        function curAtk() { return (CFG || D()).atk + (level - 1); }
+        function curSkillDmg() { return (CFG || D()).skillDmg + (level - 1); }
 
         function updateBars() {
             document.getElementById('playerFill').style.width = (playerHp / maxHp * 100) + '%';
             document.getElementById('playerHpNum').textContent = playerHp + '/' + maxHp;
-            document.getElementById('monsterFill').style.width = (bossHp / BOSS_MAX * 100) + '%';
-            document.getElementById('monsterHpNum').textContent = bossHp + '/' + BOSS_MAX;
+            document.getElementById('monsterFill').style.width = (bossHp / bossMax * 100) + '%';
+            document.getElementById('monsterHpNum').textContent = bossHp + '/' + bossMax;
         }
 
         function battleAction() {
@@ -2001,11 +2277,15 @@
             maxHp = PLAYER_MAX;
             playerHp = maxHp;
             playerX = 105;
-            bossHp = BOSS_MAX;
+            CFG = { ...D() };
+            bossMax = CFG.bossHp;
+            bossHp = bossMax;
             gameOver = false;
             fighting = true;
             phase = 'minions';
             atkCd = 0; ultCd = 0;
+            ultBar = 0;
+            ultUses = 5;
             hurtInv = 0;
             isJumping = false; jumpT = 0;
             combo = 0; comboTimer = 0;
@@ -2013,9 +2293,9 @@
             attacking = false;
             casting = false;
             minions = [
-                { i: 0, x: 248, hp: 6, max: 6, alive: true, cd: 1.0, freeze: 0, rageT: 0, walk: 0 },
-                { i: 1, x: 296, hp: 7, max: 7, alive: true, cd: 1.0, freeze: 0, rageT: 0, walk: 0 },
-                { i: 2, x: 344, hp: 8, max: 8, alive: true, cd: 1.0, freeze: 0, rageT: 0, walk: 0 }
+                { i: 0, x: 248, hp: CFG.minionHp, max: CFG.minionHp, alive: true, cd: 1.0, freeze: 0, rageT: 0, walk: 0 },
+                { i: 1, x: 296, hp: CFG.minionHp, max: CFG.minionHp, alive: true, cd: 1.0, freeze: 0, rageT: 0, walk: 0 },
+                { i: 2, x: 344, hp: CFG.minionHp, max: CFG.minionHp, alive: true, cd: 1.0, freeze: 0, rageT: 0, walk: 0 }
             ];
             fightEpoch++;
             bossX = 460;
@@ -2037,9 +2317,11 @@
             setFighterFace('normal');
             setMonsterFace('normal');
             setFighterColor();
+            setWeaponGraphic(ele);
             updateBars();
             updateXpUI();
             updateUltUI();
+            updateUltBarUI();
             document.getElementById('startBtn').textContent = '⚔️ 战斗中…';
             document.getElementById('startBtn').disabled = true;
             log('⚔️ 战斗开始！三只岩甲兽冲了过来，用 ' + ELEMENTS[ele].icon + ' 的力量打倒它们！');
@@ -2081,6 +2363,7 @@
             if (k === 'arrowup' || k === 'w' || k === ' ') { doJump(); }
             if (k === 'j') { doAttack(); }
             if (k === 'k') { doUlt(); }
+            if (k === 'l') { doUltimate(); }
         });
         document.addEventListener('keyup', e => {
             const k = e.key.toLowerCase();
@@ -2116,8 +2399,8 @@
         })();
         requestAnimationFrame(t => { lastT = t; rafId = requestAnimationFrame(gameLoop); });
 
-        // 🏘️ 体验1：点亮青石板路
-        let stoneLit = 0;
+        // 🏘️ 体验1：限时点亮青石板（风会吹灭）
+        let stoneLit = 0, stoneTimer = null, stoneTime = 30, stoneOn = false;
         const STONE_TOTAL = 10;
         function initStone() {
             const row = document.getElementById('stoneRow');
@@ -2125,84 +2408,227 @@
                 const s = document.createElement('div');
                 s.className = 'stone';
                 s.addEventListener('click', () => lightStone(s));
-                s.addEventListener('mouseover', () => lightStone(s));
                 row.appendChild(s);
             }
         }
+        function startStoneGame() {
+            stoneLit = 0; stoneTime = 30; stoneOn = true;
+            document.querySelectorAll('#stoneRow .stone').forEach(s => s.classList.remove('lit'));
+            document.getElementById('stoneCount').textContent = '⏱ 30 秒，点亮全部 ' + STONE_TOTAL + ' 块！';
+            if (stoneTimer) { clearInterval(stoneTimer); }
+            stoneTimer = setInterval(() => {
+                stoneTime--;
+                if (stoneTime <= 0) {
+                    clearInterval(stoneTimer); stoneTimer = null; stoneOn = false;
+                    document.getElementById('stoneCount').textContent = stoneLit >= STONE_TOTAL
+                        ? '🎉 老街全亮！用时 ' + (30 - stoneTime) + ' 秒！'
+                        : '😅 时间到！点亮了 ' + stoneLit + ' 块……再试一次？';
+                    return;
+                }
+                updateStoneUI();
+            }, 1000);
+        }
+        function updateStoneUI() {
+            document.getElementById('stoneCount').textContent = '已点亮 ' + stoneLit + ' / ' + STONE_TOTAL + ' 块 · ⏱ ' + stoneTime + ' 秒';
+        }
         function lightStone(s) {
-            if (s.classList.contains('lit')) { return; }
+            if (!stoneOn || s.classList.contains('lit')) { return; }
             s.classList.add('lit');
             stoneLit++;
-            document.getElementById('stoneCount').textContent = '已点亮 ' + stoneLit + ' / ' + STONE_TOTAL + ' 块石板';
-            if (stoneLit === STONE_TOTAL) {
-                document.getElementById('stoneCount').textContent = '✨ 整条老街都亮了！走夜路不怕啦！';
+            // 💨 风：点亮后有几率吹灭一块已亮的
+            if (stoneLit < STONE_TOTAL && Math.random() < 0.45) {
+                const lit = [...document.querySelectorAll('#stoneRow .stone.lit')];
+                if (lit.length > 1) {
+                    const blow = lit[Math.floor(Math.random() * lit.length)];
+                    setTimeout(() => {
+                        if (!stoneOn || !blow.classList.contains('lit')) { return; }
+                        blow.classList.remove('lit'); stoneLit--; updateStoneUI();
+                    }, 350);
+                }
+            }
+            updateStoneUI();
+            if (stoneLit >= STONE_TOTAL) {
+                if (stoneTimer) { clearInterval(stoneTimer); stoneTimer = null; }
+                stoneOn = false;
+                document.getElementById('stoneCount').textContent = '🎉 老街全亮！用时 ' + (30 - stoneTime) + ' 秒！';
+                fireworks(0.35, 0.4);
             }
         }
 
-        // 🌉 体验2：放河灯（载着心愿）
+        // 🌉 体验2：心愿河灯（选颜色 + 选心愿 + 点灯许愿）
+        let lampColor = 'gold', lampWish = '平安喜乐', lampLaunched = 0;
+        function selectLampColor(c) {
+            lampColor = c;
+            document.querySelectorAll('.lamp-color').forEach(b => b.classList.toggle('active', b.dataset.c === c));
+        }
+        function pickWish(w) {
+            lampWish = w;
+            const inp = document.getElementById('wishInput');
+            const hasCustom = !!inp.value.trim();
+            if (!hasCustom) { inp.value = ''; }
+            document.querySelectorAll('.wish-card').forEach(b => b.classList.toggle('active', b.textContent.indexOf(w) >= 0));
+            document.getElementById('lampMsg').textContent = '🍀 已选心愿「' + w + '」' + (hasCustom ? '（输入框已有自定义心愿，优先使用）' : '');
+        }
         function launchLantern() {
             const river = document.getElementById('river');
             const boat = document.createElement('div');
-            boat.className = 'lantern-boat';
+            boat.className = 'lantern-boat b-' + lampColor;
             const emoji = document.createElement('span');
             emoji.className = 'boat-emoji';
             emoji.textContent = '🛶';
             const wish = document.createElement('span');
             wish.className = 'boat-wish';
             const input = document.getElementById('wishInput');
-            wish.textContent = input.value.trim() || '幸福平安';
+            const w = input.value.trim() || lampWish;
+            wish.textContent = w;
             const lamp = document.createElement('span');
             lamp.className = 'boat-lamp';
             lamp.textContent = '🏮';
             boat.append(emoji, wish, lamp);
             boat.style.top = (12 + Math.random() * 40) + 'px';
-            boat.style.animationDelay = (Math.random() * 0.5) + 's';
+            boat.style.animationDelay = (Math.random() * 0.4) + 's';
+            // ✨ 点击河灯 → 心愿化作流星
+            boat.addEventListener('click', () => {
+                const r = boat.getBoundingClientRect();
+                boat.remove();
+                wishStar(r);
+                document.getElementById('lampMsg').textContent = '✨ 心愿「' + w + '」化作流星飞走了！';
+            });
             river.appendChild(boat);
             input.value = '';
+            lampLaunched++;
+            document.getElementById('lampMsg').textContent = '🏮 河灯载着「' + w + '」飘向远方……（点它 = 放飞心愿）';
             setTimeout(() => boat.remove(), 5500);
+            // 放满 5 盏 → 烟火庆祝
+            if (lampLaunched >= 5) { lampLaunched = 0; fireworks(0.6, 0.5); }
+        }
+        function wishStar(rect) {
+            const s = document.createElement('div');
+            s.className = 'fx-star';
+            s.textContent = '✨';
+            s.style.left = (rect.left + rect.width / 2 - 11) + 'px';
+            s.style.top = rect.top + 'px';
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 1250);
         }
 
-        // 🏮 体验3：点亮灯笼
-        let lanternLit = 0;
-        const LANTERN_TOTAL = 8;
-        function initLantern() {
-            const row = document.getElementById('lanternRow');
-            for (let i = 0; i < LANTERN_TOTAL; i++) {
+        // 🏮 体验3：夜巷找灯笼（找齐 8 盏，点错扣时间）
+        let laneLit = 0, laneTimer = null, laneTime = 20, laneOn = false;
+        const LANE_TOTAL = 8;
+        function startLaneGame() {
+            laneLit = 0; laneTime = 20; laneOn = true;
+            const lights = document.getElementById('laneLights');
+            lights.innerHTML = '';
+            document.getElementById('lanternCount').textContent = '找到 0 / ' + LANE_TOTAL + ' 盏';
+            const lane = document.getElementById('lane');
+            const w = lane.clientWidth, h = lane.clientHeight;
+            for (let i = 0; i < LANE_TOTAL; i++) {
                 const l = document.createElement('span');
-                l.className = 'lantern';
+                l.className = 'lane-lamp';
                 l.textContent = '🏮';
-                l.addEventListener('click', () => lightLantern(l));
-                row.appendChild(l);
+                l.style.left = (8 + Math.random() * Math.max(10, w - 70)) + 'px';
+                l.style.top = (16 + Math.random() * Math.max(10, h - 60)) + 'px';
+                l.addEventListener('click', (e) => { e.stopPropagation(); lightLaneLamp(l); });
+                lights.appendChild(l);
             }
+            // 点巷子空白 → 扣 2 秒
+            lane.onclick = () => {
+                if (!laneOn) { return; }
+                laneTime = Math.max(0, laneTime - 2);
+                document.getElementById('laneTime').textContent = '⏱ ' + laneTime + ' 秒';
+                if (laneTime <= 0) { endLaneGame(false); }
+            };
+            if (laneTimer) { clearInterval(laneTimer); }
+            laneTimer = setInterval(() => {
+                laneTime--;
+                document.getElementById('laneTime').textContent = '⏱ ' + laneTime + ' 秒';
+                if (laneTime <= 0) { endLaneGame(false); }
+            }, 1000);
+            document.getElementById('laneTime').textContent = '⏱ 20 秒';
         }
-        function lightLantern(l) {
-            if (l.classList.contains('lit')) { return; }
+        function lightLaneLamp(l) {
+            if (!laneOn || l.classList.contains('lit')) { return; }
             l.classList.add('lit');
-            lanternLit++;
-            document.getElementById('lanternCount').textContent = '已点亮 ' + lanternLit + ' / ' + LANTERN_TOTAL + ' 盏';
-            if (lanternLit === LANTERN_TOTAL) {
-                document.getElementById('lanternCount').textContent = '🏮✨ 夜巷全亮！灯笼们都在朝你笑！';
-            }
+            laneLit++;
+            document.getElementById('lanternCount').textContent = '找到 ' + laneLit + ' / ' + LANE_TOTAL + ' 盏';
+            if (laneLit >= LANE_TOTAL) { endLaneGame(true); }
+        }
+        function endLaneGame(win) {
+            laneOn = false;
+            if (laneTimer) { clearInterval(laneTimer); laneTimer = null; }
+            document.getElementById('lanternCount').textContent = win
+                ? '🏮✨ 全部找到！夜巷全亮！'
+                : '😅 时间到！找到了 ' + laneLit + ' 盏，再找一次？';
+            if (win) { fireworks(0.6, 0.35); }
         }
 
-        // 🪵 体验4：刻木雕
-        let carveCount = 0;
-        const CARVE_TOTAL = 4;
+        // 🪵 体验4：木雕工坊（选对刻刀，按顺序刻）
+        let carveStep = 0, selectedTool = 'coarse';
+        const CARVE_STEPS = [
+            { tool: 'coarse', id: 'carve1', name: '粗刀', msg: '鱼身' },
+            { tool: 'fine',   id: 'carve2', name: '细刀', msg: '鱼尾' },
+            { tool: 'round',  id: 'carve3', name: '圆刀', msg: '鱼鳍' },
+            { tool: 'needle', id: 'carve4', name: '刻针', msg: '点睛' }
+        ];
+        function selectTool(t) {
+            selectedTool = t;
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.toggle('active', b.dataset.tool === t));
+        }
         function carveOnce() {
-            if (carveCount >= CARVE_TOTAL) {
-                carveCount = 0;
-                for (let i = 1; i <= CARVE_TOTAL; i++) {
-                    document.getElementById('carve' + i).classList.remove('done');
-                }
-                document.getElementById('carveMsg').textContent = '再来一条！还差 ' + CARVE_TOTAL + ' 刀……';
+            const cur = CARVE_STEPS[carveStep];
+            if (!cur) {
+                carveStep = 0;
+                document.getElementById('carving').style.filter = '';
+                document.querySelectorAll('.carve-stroke').forEach(p => p.classList.remove('done'));
+                document.getElementById('carveMsg').textContent = '第 1 步：选「🔪 粗刀」，点「刻一刀」';
                 return;
             }
-            carveCount++;
-            document.getElementById('carve' + carveCount).classList.add('done');
-            if (carveCount === CARVE_TOTAL) {
-                document.getElementById('carveMsg').textContent = '🐟 小鱼木雕做好了！送给你！（点击按钮再来一条）';
+            if (selectedTool !== cur.tool) {
+                document.getElementById('carveMsg').textContent = '⚠️ 这刀不适合刻' + cur.msg + '……试试「' + cur.name + '」';
+                return;
+            }
+            document.getElementById(cur.id).classList.add('done');
+            woodChips();
+            carveStep++;
+            if (carveStep >= CARVE_STEPS.length) {
+                document.getElementById('carveMsg').textContent = '🐟✨ 大师之作！小鱼木雕完成！（点「刻一刀」再刻一条）';
+                document.getElementById('carving').style.filter = 'drop-shadow(0 0 8px #ffd98a)';
+                fireworks(0.5, 0.55);
             } else {
-                document.getElementById('carveMsg').textContent = '还差 ' + (CARVE_TOTAL - carveCount) + ' 刀……';
+                const nxt = CARVE_STEPS[carveStep];
+                document.getElementById('carveMsg').textContent = '✅ ' + cur.msg + ' 刻好了！下一步：选「' + nxt.name + '」刻' + nxt.msg;
+            }
+        }
+        function woodChips() {
+            const svg = document.getElementById('carving');
+            const r = svg.getBoundingClientRect();
+            for (let i = 0; i < 8; i++) {
+                const c = document.createElement('div');
+                c.className = 'fx-burst';
+                c.style.background = ['#d9a05b', '#c98a4a', '#e8c088'][Math.floor(Math.random() * 3)];
+                c.style.left = (r.left + r.width / 2) + 'px';
+                c.style.top = (r.top + r.height / 2) + 'px';
+                c.style.setProperty('--bx', (Math.random() * 90 - 45) + 'px');
+                c.style.setProperty('--by', (Math.random() * 90 - 45) + 'px');
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 950);
+            }
+        }
+
+        // 🎆 烟火：从一点爆开彩色粒子
+        function fireworks(x, y) {
+            const colors = ['#ffd98a', '#ff9d6e', '#7fd0ff', '#7ee0a0', '#ff8ac4'];
+            for (let i = 0; i < 34; i++) {
+                const c = document.createElement('div');
+                c.className = 'fx-burst';
+                c.style.background = colors[i % colors.length];
+                c.style.left = (window.innerWidth * x) + 'px';
+                c.style.top = (window.innerHeight * y) + 'px';
+                const a = (i / 34) * Math.PI * 2, d = 40 + Math.random() * 70;
+                c.style.setProperty('--bx', (Math.cos(a) * d) + 'px');
+                c.style.setProperty('--by', (Math.sin(a) * d) + 'px');
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 950);
             }
         }
 
@@ -2308,7 +2734,6 @@
             }
         }
         initStone();
-        initLantern();
         initEveLantern();
         showTourStage();
     </script>
