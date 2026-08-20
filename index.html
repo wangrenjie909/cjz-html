@@ -719,19 +719,33 @@
         .minion-bob { animation: minionBob 2.2s ease-in-out infinite; }
         @keyframes minionBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         #startBtn {
+            position: absolute; top: 8px; right: 8px; z-index: 5;
+            cursor: grab; user-select: none; touch-action: none;
             background: linear-gradient(90deg, #ff9d6e, #e8552d); color: #fff;
             border: none; padding: 10px 22px; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold;
             box-shadow: 0 4px 14px rgba(232, 85, 45, 0.4); transition: transform .2s, box-shadow .2s;
         }
         #startBtn:hover { transform: scale(1.05); }
         #startBtn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+        /* 紧凑双列血条布局 */
+        .bars-duo { display: flex; gap: 10px; margin: 6px 0; }
+        .bar-cell { flex: 1; min-width: 0; }
+        .bar-top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #a8c6ff; margin-bottom: 3px; }
+        .bar-top .hp-num { color: #f0f4ff; font-weight: bold; }
+        #monsterBox { scroll-margin-top: 90px; }
+        .move-btn { padding: 7px 10px; font-size: 14px; }
+        .fight-hint { font-size: 12px; margin: 6px 0; }
         /* 绝杀条与巨刃光弧 */
         .ultbar-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 14px; }
         .ultbar-fill { background: linear-gradient(90deg, #7a4fd0, #b08cff); }
-        .ultbar-row.full .ultbar-fill { animation: ultReady 1s ease-in-out infinite; }
+        .ultbar-row.full .ultbar-fill, .bar-cell.full .ultbar-fill { animation: ultReady 1s ease-in-out infinite; }
         @keyframes ultReady { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.7); } }
         #ultBtn2 { transition: transform .2s, box-shadow .2s, background .2s; }
         #ultBtn2.ready { background: linear-gradient(90deg, #b08cff, #7a4fd0); box-shadow: 0 0 14px rgba(176,140,255,.8); animation: ultReady 1s ease-in-out infinite; }
+        /* ⚡ 玩家狂暴模式 */
+        #fighterMove.rage { filter: drop-shadow(0 0 14px #ff5a3c) brightness(1.35); animation: ragePulse .3s ease-in-out infinite alternate; }
+        @keyframes ragePulse { from { opacity: 1; } to { opacity: .82; } }
+        #rageBtn.on { background: linear-gradient(90deg,#8e1f14,#ff5a3c); box-shadow: 0 0 14px rgba(255,90,60,.8); animation: ultReady .6s ease-in-out infinite; }
         /* 难度选择 */
         .diff-select { display: flex; gap: 8px; justify-content: center; align-items: center; margin: 0 0 12px; flex-wrap: wrap; }
         .diff-label { font-size: 13px; color: #a8c6ff; }
@@ -740,6 +754,13 @@
         .diff-btn.active { border-color: transparent; }
         .diff-btn[data-diff="normal"].active { background: linear-gradient(135deg,#1e6b5a,#4ecdc4); box-shadow: 0 0 12px rgba(78,205,196,.5); }
         .diff-btn[data-diff="hell"].active { background: linear-gradient(135deg,#8e1f14,#ff5a3c); box-shadow: 0 0 12px rgba(255,90,60,.6); }
+        .diff-btn[data-diff="tutorial"].active { background: linear-gradient(135deg,#8a6d1f,#ffd98a); box-shadow: 0 0 12px rgba(255,217,138,.6); }
+        #teachBox { font-size: 13px; color: #ffd98a; background: rgba(255,217,138,0.1); border: 1px dashed rgba(255,217,138,0.4); border-radius: 10px; padding: 8px 12px; margin: 8px 0 0; min-height: 20px; display: none; }
+        /* 🎓 教程动效：按键高亮引导 + 提示弹跳 */
+        .teach-highlight { animation: teachPulse .7s ease-in-out infinite !important; border-color: #ffd98a !important; box-shadow: 0 0 16px rgba(255,217,138,.95) !important; }
+        @keyframes teachPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+        #teachBox.teachBounce { animation: teachBounce .5s ease-out; }
+        @keyframes teachBounce { 0% { transform: translateY(-10px) scale(.96); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
         .ult-arc { fill: none; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 400; stroke-dashoffset: 400; animation: ultArc .35s ease-out forwards; }
         @keyframes ultArc { 55% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
         .ult-ring { position: absolute; border: 4px solid var(--rc); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; animation: ultRing .6s ease-out forwards; }
@@ -1102,31 +1123,33 @@
                             </g>
                         </svg>
                         <div id="fxLayer"></div>
+                        <p><button id="startBtn" onclick="battleAction()">⚔️ 开始战斗</button></p>
                     </div>
 
-                    <div class="hp-row">
-                        <span class="hp-name" id="playerName">🧍 战士</span>
-                        <div class="bar"><div id="playerFill" class="fill player-fill"></div></div>
-                        <span class="hp-num" id="playerHpNum">80/80</span>
+                    <div class="bars-duo">
+                        <div class="bar-cell">
+                            <div class="bar-top"><span class="hp-name" id="playerName">🧍 战士</span><span class="hp-num" id="playerHpNum">80/80</span></div>
+                            <div class="bar"><div id="playerFill" class="fill player-fill"></div></div>
+                        </div>
+                        <div class="bar-cell" id="bossHpRow" style="visibility:hidden">
+                            <div class="bar-top"><span class="hp-name">👹 镇塔魔尊</span><span class="hp-num" id="monsterHpNum">220/220</span></div>
+                            <div class="bar"><div id="monsterFill" class="fill monster-fill"></div></div>
+                        </div>
                     </div>
-                    <div class="xp-row">
-                        <span class="hp-name" id="levelTag">Lv.1</span>
-                        <div class="bar"><div id="xpFill" class="fill xp-fill"></div></div>
-                        <span class="hp-num" id="xpNum">0/10</span>
-                    </div>
-                    <div class="ultbar-row" id="ultbarRow">
-                        <span class="hp-name">🔱 绝杀</span>
-                        <div class="bar"><div id="ultBarFill" class="fill ultbar-fill"></div></div>
-                        <span class="hp-num" id="ultBarNum">0/100</span>
-                    </div>
-                    <div class="hp-row" id="bossHpRow" style="display:none">
-                        <span class="hp-name">👹 镇塔魔尊</span>
-                        <div class="bar"><div id="monsterFill" class="fill monster-fill"></div></div>
-                        <span class="hp-num" id="monsterHpNum">220/220</span>
+                    <div class="bars-duo">
+                        <div class="bar-cell">
+                            <div class="bar-top"><span class="hp-name" id="levelTag">Lv.1</span><span class="hp-num" id="xpNum">0/10</span></div>
+                            <div class="bar"><div id="xpFill" class="fill xp-fill"></div></div>
+                        </div>
+                        <div class="bar-cell" id="ultbarRow">
+                            <div class="bar-top"><span class="hp-name">🔱 绝杀</span><span class="hp-num" id="ultBarNum">0/100</span></div>
+                            <div class="bar"><div id="ultBarFill" class="fill ultbar-fill"></div></div>
+                        </div>
                     </div>
 
                     <div class="diff-select">
                         <span class="diff-label">🌗 难度</span>
+                        <button class="diff-btn" data-diff="tutorial" onclick="selectDiff('tutorial')">🎓 新手</button>
                         <button class="diff-btn active" data-diff="normal" onclick="selectDiff('normal')">😊 普通</button>
                         <button class="diff-btn" data-diff="hell" onclick="selectDiff('hell')">😈 地狱</button>
                     </div>
@@ -1136,22 +1159,21 @@
                         <button class="ele-btn" data-ele="wood" onclick="selectEle('wood')">🌿 木灵·小森</button>
                     </div>
 
-                    <p class="fight-hint"><b>键盘：</b>←→ / A D 跑动 · W / 空格 跳跃 · J 普攻（空中=飞踢）· K 大招 · L 绝杀<br>
-                    <b>大招：</b>❄️ 冰霜新星（冻结全场）· 🔥 烈焰冲击（灼烧）· 🌿 自然之怒（缠绕+回血）<br>
-                    <b>🔱 绝杀：</b>攻击攒能量，满 100 按 L —— 大砍刀劈落！冰=蓝 / 火=红 / 木=绿</p>
+                    <p class="fight-hint">←→/A D 跑动 · 空格/W 跳 · J 普攻 · K 大招 · L 绝杀 · R 狂暴 &nbsp;·&nbsp; ❄️冰=蓝 / 🔥火=红 / 🌿木=绿</p>
 
                     <div class="move-row">
-                        <button class="move-btn" onmousedown="holdMove(-1)" onmouseup="holdMove(0)" onmouseleave="holdMove(0)" ontouchstart="holdMove(-1)" ontouchend="holdMove(0)">◀</button>
-                        <button class="move-btn" onmousedown="holdMove(1)" onmouseup="holdMove(0)" onmouseleave="holdMove(0)" ontouchstart="holdMove(1)" ontouchend="holdMove(0)">▶</button>
-                        <button class="move-btn" onclick="doJump()">⬆ 跳</button>
-                        <button class="move-btn skill" onclick="doAttack()">⚔ 攻</button>
+                        <button class="move-btn dir-btn" onmousedown="holdMove(-1)" onmouseup="holdMove(0)" onmouseleave="holdMove(0)" ontouchstart="holdMove(-1)" ontouchend="holdMove(0)">◀</button>
+                        <button class="move-btn dir-btn" onmousedown="holdMove(1)" onmouseup="holdMove(0)" onmouseleave="holdMove(0)" ontouchstart="holdMove(1)" ontouchend="holdMove(0)">▶</button>
+                        <button class="move-btn" id="jumpBtn" onclick="doJump()">⬆ 跳</button>
+                        <button class="move-btn skill" id="atkBtn" onclick="doAttack()">⚔ 攻</button>
                         <button class="move-btn skill skill-btn" id="ultBtn" onclick="doUlt()">✦ 大招</button>
                         <button class="move-btn skill skill-btn" id="ultBtn2" onclick="doUltimate()">🔱 绝杀</button>
+                        <button class="move-btn skill skill-btn" id="rageBtn" onclick="doRage()">⚡ 狂暴</button>
                     </div>
                     <div id="skillCdText"></div>
 
-                    <p><button id="startBtn" onclick="battleAction()">⚔️ 开始战斗</button></p>
                     <p id="battleLog">❄️🔥🌿 先选择你的元素战士，再点击开始战斗！</p>
+                    <p id="teachBox"></p>
                     <p id="comboTag"></p>
                     <p id="levelMsg"></p>
                     <p id="fightRecord">🏆 胜利纪录：暂无</p>
@@ -1231,6 +1253,13 @@
         const PLAYER_MAX = 80;
         // 🌗 难度配置（普通 / 地狱）
         const DIFF = {
+            tutorial: {
+                bossHp: 150, minionHp: 20, atk: 6, skillDmg: 10, ultDmg: 15,
+                minionDmg: 1, minionSpeed: 20, minionRage: 1,
+                bossPunch: [1, 1], bossBreath: [1, 1], bossCharge: 1,
+                bossSpeed: [40, 50], breathCd: [3, 2.4], chargeCd: 7,
+                ragePct: 0, regen: [99, 99], regenAmt: [0, 0], hurtInv: 0.8
+            },
             normal: {
                 bossHp: 120, minionHp: 20, atk: 4, skillDmg: 6, ultDmg: 10,
                 minionDmg: 2, minionSpeed: 34, minionRage: 2.2,
@@ -1290,6 +1319,7 @@
         let casting = false;              // ✨ 大招施法动作中（手脚挥动，暂停走路摆动）
         let ultBar = 0;                   // 🔱 绝杀能量 0-100
         let ultUses = 5;                  // 🔱 绝杀次数（每局 5 次）
+        let rageOn = false, rageT = 0, rageCd = 0;   // ⚡ 狂暴模式（2 秒，CD 15 秒）
         let jumpFxT = 0;                  // 🦘 空中拖尾粒子计时器
         let fightWins = 0;
         try { fightWins = parseInt(localStorage.getItem('fightWins') || '0'); } catch (e) {}
@@ -1430,17 +1460,73 @@
             if (weapon) { weapon.style.filter = 'drop-shadow(0 0 4px ' + E.color + ')'; }
         }
 
-        // 🌗 切换难度（普通 / 地狱）
+        // 🌗 切换难度（普通 / 地狱 / 新手教程）
         function selectDiff(d) {
             difficulty = d;
             document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.dataset.diff === d));
+            teachShow();
             if (!fighting && !gameOver) {
                 bossMax = D().bossHp;
-                document.getElementById('monsterHpNum').textContent = bossHp + '/' + bossMax;
-                log(d === 'hell' ? '😈 地狱难度！怪兽更强更凶，跳跃躲冲锋是保命关键！' : '😊 普通难度，轻松游玩～');
+                document.getElementById('monsterHpNum').textContent = bossMax + '/' + bossMax;
+                if (d === 'tutorial') { log('🎓 新手教学：选一个元素，点开始，跟着提示一步步学！'); }
+                else { log(d === 'hell' ? '😈 地狱难度！怪兽更强更凶，跳跃躲冲锋是保命关键！' : '😊 普通难度，轻松游玩～'); }
             } else {
-                log(d === 'hell' ? '😈 已切换地狱难度（下一局生效）' : '😊 已切换普通难度（下一局生效）');
+                log(d === 'tutorial' ? '🎓 已选新手教学（下一局生效）' : (d === 'hell' ? '😈 已切换地狱难度（下一局生效）' : '😊 已切换普通难度（下一局生效）'));
             }
+        }
+
+        // 🎓 新手教程状态机
+        let teachStep = -1;
+        const TEACH_STEPS = [
+            '1️⃣ 按 ← →（或 A/D）跑动，熟悉移动节奏',
+            '2️⃣ 靠近怪兽按 J 普攻（它伤害很低，别怕）',
+            '3️⃣ 怪兽吐息前会有提示——按 空格/W 跳起来躲开！',
+            '4️⃣ 怪兽要冲锋了！跳起来躲开！',
+            '5️⃣ 按 K 释放元素大招！',
+            '6️⃣ 用普攻攒能量，满 100 按 L 放绝杀！'
+        ];
+        function teachShow() {
+            const box = document.getElementById('teachBox');
+            const isTut = difficulty === 'tutorial' && teachStep >= 0 && teachStep < TEACH_STEPS.length;
+            // 清除旧高亮
+            document.querySelectorAll('.teach-highlight').forEach(b => b.classList.remove('teach-highlight'));
+            if (isTut) {
+                box.style.display = 'block';
+                box.textContent = TEACH_STEPS[teachStep];
+                // 弹跳动画（内容变化时重启）
+                box.classList.remove('teachBounce');
+                void box.offsetWidth;
+                box.classList.add('teachBounce');
+                // 🎓 高亮对应操作键：跑动→◀▶ / 普攻→攻 / 跳躲→跳 / 大招→✦ / 绝杀→🔱
+                if (teachStep === 0) {
+                    document.querySelectorAll('.dir-btn').forEach(b => b.classList.add('teach-highlight'));
+                } else if (teachStep === 1) {
+                    document.getElementById('atkBtn').classList.add('teach-highlight');
+                } else if (teachStep === 2 || teachStep === 3) {
+                    document.getElementById('jumpBtn').classList.add('teach-highlight');
+                } else if (teachStep === 4) {
+                    document.getElementById('ultBtn').classList.add('teach-highlight');
+                } else if (teachStep === 5) {
+                    document.getElementById('ultBtn2').classList.add('teach-highlight');
+                }
+                // ✨ 步骤切换时火柴人撒元素色粒子（动感引导）
+                spawnParticles(playerX, 150, ELEMENTS[ele].color, 10, 60);
+            } else {
+                box.style.display = 'none';
+            }
+        }
+        function teachNext() {
+            if (difficulty !== 'tutorial') { return; }
+            teachStep++;
+            teachShow();
+            if (teachStep === TEACH_STEPS.length) {
+                // 🎓 毕业：全部 6 步（含绝杀）完成
+                log('🎓 教学全部完成！你已掌握地狱级全部技巧，去挑战 😈 地狱级吧！');
+                setTimeout(() => { if (!gameOver) { endFight(true); } }, 1500);
+                return;
+            }
+            if (teachStep >= TEACH_STEPS.length) { return; }
+            log('✅ 做得好！' + TEACH_STEPS[teachStep]);
         }
 
         function selectEle(id) {
@@ -1462,7 +1548,7 @@
             let dir = (keys.left ? -1 : 0) + (keys.right ? 1 : 0) + touchMove;
             dir = Math.max(-1, Math.min(1, dir));
             if (dir !== 0) {
-                playerX += dir * E.speed * dt;
+                playerX += dir * E.speed * (rageOn ? 1.25 : 1) * dt;
                 playerX = Math.max(40, Math.min(340, playerX));
                 const move = document.getElementById('fighterMove');
                 if (dir < 0) {
@@ -1470,6 +1556,7 @@
                 } else {
                     move.setAttribute('transform', 'translate(' + (playerX - 105) + ' 0)');
                 }
+                if (difficulty === 'tutorial' && teachStep === 0) { teachNext(); }
             }
             // 🚶 走路关节动画：腿交替摆动，手臂反向摆动
             const legL = document.getElementById('kickLeg');
@@ -1536,6 +1623,21 @@
                 if (hurtInv <= 0) {
                     document.getElementById('fighterMove').classList.remove('inv-blink');
                 }
+            }
+            // ⚡ 狂暴计时与拖尾
+            if (rageT > 0) {
+                rageT -= dt;
+                if (rageT <= 0) {
+                    rageOn = false;
+                    document.getElementById('fighterMove').classList.remove('rage');
+                    log('⚡ 狂暴结束……')
+                } else if (Math.random() < 0.3) {
+                    spawnParticles(playerX, 150, ELEMENTS[ele].color, 2, 34);
+                }
+            }
+            if (rageCd > 0) {
+                rageCd -= dt;
+                updateRageUI();
             }
             if (comboTimer > 0) {
                 comboTimer -= dt;
@@ -1618,6 +1720,10 @@
                 }
             } else {
                 bossHp -= dmg;
+                // 🎓 教程：教学完成前 Boss 锁血（最低 1，不会被打死中断教学）
+                if (difficulty === 'tutorial' && teachStep < TEACH_STEPS.length - 1) { bossHp = Math.max(1, bossHp); }
+                // 🎓 教程：每次攻击命中，怪兽对你的伤害降低（3→2→1→0，越打越安全）
+                if (difficulty === 'tutorial' && bossAI) { bossAI.tutorDmg = Math.max(0, bossAI.tutorDmg - 1); }
                 if (bossHp > 0) { addXp(1); }   // 📈 击中 Boss 也涨经验
                 updateBars();
                 if (bossHp <= 0) {
@@ -1643,7 +1749,7 @@
             if (gameOver || atkCd > 0 || !ele || !fighting || attacking || casting) { return; }
             if (isJumping) { doKick(); return; }
             attacking = true;
-            atkCd = 0.4;
+            atkCd = rageOn ? 0.27 : 0.4;
             const E = ELEMENTS[ele];
             // 🏃 攻击突进：向最近敌人小步冲刺，普通攻击也能追上并命中怪兽
             const t0 = nearestEnemy();
@@ -1678,7 +1784,7 @@
                 const t = nearestEnemy();
                 if (t && Math.abs(t.x - playerX) < 72) {
                     const crit = Math.random() < 0.25;
-                    const dmg = curAtk() + (crit ? 2 : 0);
+                    const dmg = curAtk() * (rageOn ? 2 : 1) + (crit ? 2 : 0);
                     const dir = t.x > playerX ? 1 : -1;
                     // ✨ 挥砍弧光：沿挥砍方向的一串粒子
                     for (let i = 0; i < 5; i++) {
@@ -1703,6 +1809,7 @@
                     comboTimer = 2.5;
                     updateComboUI();
                     gainUlt(8);
+                    if (difficulty === 'tutorial' && teachStep === 1) { teachNext(); }
                     log('⚔️ 命中！造成 ' + dmg + ' 点伤害' + (crit ? ' 暴击！' : ''));
                 } else {
                     spawnParticles(playerX + 30, 150, '#a8c6ff', 4, 40);
@@ -1729,7 +1836,7 @@
             // 🦵 飞踢：腿朝角色前方（局部右前）大力踢出——镜像翻转后自动指向怪物方向
             leg.setAttribute('transform', 'rotate(-125 105 132)');
             if (t && Math.abs(t.x - playerX) < 72) {
-                const dmg = curAtk() + 1;
+                const dmg = (curAtk() + 1) * (rageOn ? 2 : 1);
                 // 💥 命中瞬间：脚踢到怪物身上——踢击点冲击 + 脚部粒子
                 const off = t.kind === 'boss' ? 40 : 20;
                 const kickX = t.x - off * dir;
@@ -1811,6 +1918,7 @@
             ultCdMax = E.skill.cd;
             updateUltUI();
             gainUlt(15);
+            if (difficulty === 'tutorial' && teachStep === 4) { teachNext(); }
             const t = nearestEnemy();
             shake(true);
             // ✨ 施法动作：手脚挥动 + 身体发功光效
@@ -1880,6 +1988,7 @@
                                 if (m.hp <= 0) { killMinion(m); }
                             } else {
                                 bossHp = Math.max(0, bossHp - 1);
+                                if (difficulty === 'tutorial' && teachStep < TEACH_STEPS.length - 1) { bossHp = Math.max(1, bossHp); }
                                 updateBars();
                                 if (bossHp <= 0) { endFight(true); return; }
                             }
@@ -1958,14 +2067,34 @@
             layer.appendChild(r);
             setTimeout(() => r.remove(), 650);
         }
+        // ⚡ 2 秒狂暴模式
+        function updateRageUI() {
+            const btn = document.getElementById('rageBtn');
+            if (!btn) { return; }
+            if (rageOn) { btn.textContent = '⚡ 狂暴中'; btn.classList.add('on'); }
+            else if (rageCd > 0) { btn.textContent = '⚡ ' + Math.ceil(rageCd) + 's'; btn.classList.remove('on'); }
+            else { btn.textContent = '⚡ 狂暴'; btn.classList.remove('on'); }
+        }
+        function doRage() {
+            if (!fighting || gameOver || !ele) { return; }
+            if (rageCd > 0) { log('⚡ 狂暴还在冷却：' + rageCd.toFixed(1) + ' 秒'); return; }
+            if (rageOn) { return; }
+            rageOn = true; rageT = 2; rageCd = 15;
+            document.getElementById('fighterMove').classList.add('rage');
+            spawnParticles(playerX, 140, ELEMENTS[ele].color, 22, 100);
+            log('⚡ 狂暴模式！2 秒内普攻伤害翻倍、攻速翻倍！');
+            updateRageUI();
+        }
         // 🔱 绝杀：大砍刀劈落 + 元素色特效（冰蓝 / 火红 / 木绿）
         function doUltimate() {
             if (!ele || !fighting || gameOver || attacking || casting) { return; }
             if (ultUses <= 0) { log('🔱 绝杀次数已用完（每局 5 次）！'); return; }
             if (ultBar < 100) { log('🔱 绝杀能量还差 ' + Math.ceil(100 - ultBar) + '，继续攻击攒能量！'); return; }
+            if (difficulty === 'tutorial' && teachStep !== 5) { log('🎓 绝杀还没学到！先完成前面第 ' + (teachStep + 1) + ' 步'); return; }
             ultBar = 0;
             ultUses--;
             updateUltBarUI();
+            if (difficulty === 'tutorial' && teachStep === 5) { teachNext(); }
             attacking = true;
             const ep = fightEpoch;
             const E = ELEMENTS[ele];
@@ -2040,7 +2169,7 @@
                                     const alive = tgt.kind === 'minion' ? minions[tgt.i].alive : (phase === 'boss');
                                     if (!alive) { return; }
                                     if (tgt.kind === 'minion') { const m = minions[tgt.i]; m.hp -= 1; if (m.hp <= 0) { killMinion(m); } }
-                                    else { bossHp = Math.max(0, bossHp - 1); updateBars(); if (bossHp <= 0) { endFight(true); return; } }
+                                    else { bossHp = Math.max(0, bossHp - 1); if (difficulty === 'tutorial' && teachStep < TEACH_STEPS.length - 1) { bossHp = Math.max(1, bossHp); } updateBars(); if (bossHp <= 0) { endFight(true); return; } }
                                     spawnDmg(tgt.x, 140, '-1', '#ff9d6e', false);
                                     flash(tgt.el);
                                 }, k * 500);
@@ -2069,7 +2198,7 @@
 
         // 🤕 玩家受击
         function hurtPlayer(dmg, fromX, reason) {
-            if (hurtInv > 0 || gameOver) { return; }
+            if (hurtInv > 0 || gameOver || dmg <= 0) { return; }
             playerHp = Math.max(0, playerHp - dmg);
             hurtInv = CFG.hurtInv;
             document.getElementById('fighterMove').classList.add('inv-blink');
@@ -2148,8 +2277,9 @@
                 const dir = playerX > bossX ? 1 : -1;
                 bossX += dir * speed * dt;
                 bossX = Math.max(210, Math.min(360, bossX));
+                const bdmg = bossDmg(bossAI.rage ? CFG.bossPunch[1] : CFG.bossPunch[0]);
                 if (Math.abs(playerX - bossX) < 50) {
-                    hurtPlayer(bossAI.rage ? CFG.bossPunch[1] : CFG.bossPunch[0], bossX, '👹 镇塔魔尊挥拳砸来！受到 ' + (bossAI.rage ? CFG.bossPunch[1] : CFG.bossPunch[0]) + ' 点伤害！');
+                    hurtPlayer(bdmg, bossX, '👹 镇塔魔尊挥拳砸来！受到 ' + bdmg + ' 点伤害！');
                 }
                 if (Math.abs(playerX - bossX) < 95) {
                     bossAI.state = 'attack';
@@ -2167,6 +2297,7 @@
                     bossAI.chargeT = 0.8;
                     setMonsterFace('angry');
                     log('💨 镇塔魔尊发起冲锋！快躲开！');
+                    if (difficulty === 'tutorial' && teachStep === 3) { log('⬆️ 冲锋来了！跳起来躲开！'); }
                     shake(false);
                 }
                 if (Math.abs(playerX - bossX) > 150) { bossAI.state = 'approach'; }
@@ -2175,9 +2306,11 @@
                 bossX += dir * 240 * dt;
                 bossX = Math.max(200, Math.min(365, bossX));
                 bossAI.chargeT -= dt;
+                const bdmg = bossDmg(CFG.bossCharge);
                 if (Math.abs(playerX - bossX) < 55 && hurtInv <= 0 && !isJumping) {
-                    hurtPlayer(CFG.bossCharge, bossX, '⚡ 被冲锋撞飞！受到 ' + CFG.bossCharge + ' 点伤害！');
+                    hurtPlayer(bdmg, bossX, '⚡ 被冲锋撞飞！受到 ' + bdmg + ' 点伤害！');
                 }
+                if (difficulty === 'tutorial' && isJumping && teachStep === 3) { teachNext(); }
                 if (bossAI.chargeT <= 0) {
                     bossAI.state = 'attack';
                     bossAI.cd = 1.0;
@@ -2190,6 +2323,7 @@
         // 🔥 Boss 吐息（可被跳跃躲开）
         function bossBreath() {
             const dir = playerX > bossX ? 1 : -1;
+            if (difficulty === 'tutorial' && teachStep === 2) { log('⬆️ 吐息来了！按 空格/W 跳起来躲开！'); }
             const layer = document.getElementById('fxLayer');
             for (let i = 0; i < 5; i++) {
                 const fp = document.createElement('span');
@@ -2208,21 +2342,23 @@
             document.getElementById('bossArmL').setAttribute('transform', 'rotate(45 256 134)');
             document.getElementById('bossArmR').setAttribute('transform', 'rotate(-45 344 134)');
             if (!isJumping && Math.abs(playerX - bossX) < 120) {
-                hurtPlayer(bossAI.rage ? CFG.bossBreath[1] : CFG.bossBreath[0], bossX, '🔥 被烈焰吐息击中！受到 ' + (bossAI.rage ? CFG.bossBreath[1] : CFG.bossBreath[0]) + ' 点伤害！');
+                const bdmg = bossDmg(bossAI.rage ? CFG.bossBreath[1] : CFG.bossBreath[0]);
+                hurtPlayer(bdmg, bossX, '🔥 被烈焰吐息击中！受到 ' + bdmg + ' 点伤害！');
             } else if (!isJumping) {
                 log('🔥 镇塔魔尊喷出烈焰吐息！');
             }
             setTimeout(() => { if (!gameOver) { setMonsterFace('normal'); document.getElementById('bossArmL').setAttribute('transform', ''); document.getElementById('bossArmR').setAttribute('transform', ''); } }, 400);
+            if (difficulty === 'tutorial' && isJumping && teachStep === 2) { teachNext(); }
         }
 
         // 👹 Boss 入场
         function spawnBoss() {
             phase = 'boss';
             bossHp = bossMax;
-            bossAI = { state: 'enter', cd: 0, chargeCd: CFG.chargeCd, chargeT: 0, freeze: 0, rage: false, regen: CFG.regen[0] };
+            bossAI = { state: 'enter', cd: 0, chargeCd: CFG.chargeCd, chargeT: 0, freeze: 0, rage: false, regen: CFG.regen[0], tutorDmg: 3 };
             bossX = 460;
             document.getElementById('bossMove').setAttribute('transform', 'translate(160 0)');
-            document.getElementById('bossHpRow').style.display = '';
+            document.getElementById('bossHpRow').style.visibility = 'visible';
             updateBars();
             document.getElementById('bossAura').classList.remove('on');
             setMonsterFace('angry');
@@ -2248,15 +2384,22 @@
                 maxHp += 2;
                 playerHp = maxHp;
                 xpNeed = Math.floor(xpNeed * 1.6);
-                document.getElementById('levelMsg').textContent = '⬆️ 升级！Lv.' + level + ' 体力上限 +2 · 伤害 +1';
+                // ⚡ 升级 1 秒内完成：伤害/血量立即生效，提示 1 秒后消失
+                const el = document.getElementById('levelMsg');
+                const txt = '⬆️ 升级！Lv.' + level + ' 体力上限 +2 · 伤害 +1';
+                el.textContent = txt;
+                setTimeout(() => { if (el.textContent === txt) { el.textContent = ''; } }, 1000);
                 spawnParticles(playerX, 130, '#ffd98a', 26, 150);
                 spawnDmg(playerX, 80, 'LEVEL UP!', '#ffd98a', true);
                 updateBars();
             }
             updateXpUI();
         }
-        function curAtk() { return (CFG || D()).atk + (level - 1); }
-        function curSkillDmg() { return (CFG || D()).skillDmg + (level - 1); }
+        function curAtk() { return CFG.atk + (level - 1); }
+        function curSkillDmg() { return CFG.skillDmg + (level - 1); }
+
+        // 🎓 教程专用：怪兽伤害随被击中次数递减
+        function bossDmg(n) { return difficulty === 'tutorial' ? Math.max(0, bossAI.tutorDmg) : n; }
 
         function updateBars() {
             document.getElementById('playerFill').style.width = (playerHp / maxHp * 100) + '%';
@@ -2277,6 +2420,8 @@
             maxHp = PLAYER_MAX;
             playerHp = maxHp;
             playerX = 105;
+            teachStep = -1;
+            document.getElementById('monsterBox').scrollIntoView({ block: 'start', behavior: 'smooth' });
             CFG = { ...D() };
             bossMax = CFG.bossHp;
             bossHp = bossMax;
@@ -2286,6 +2431,8 @@
             atkCd = 0; ultCd = 0;
             ultBar = 0;
             ultUses = 5;
+            rageOn = false; rageT = 0; rageCd = 0;
+            document.getElementById('fighterMove').classList.remove('rage');
             hurtInv = 0;
             isJumping = false; jumpT = 0;
             combo = 0; comboTimer = 0;
@@ -2303,7 +2450,7 @@
             document.querySelectorAll('.minion').forEach(m => { m.style.display = ''; });
             document.getElementById('bossMove').setAttribute('transform', 'translate(160 0)');
             document.querySelectorAll('.frozen, .vined').forEach(el => el.classList.remove('frozen', 'vined'));
-            document.getElementById('bossHpRow').style.display = 'none';
+            document.getElementById('bossHpRow').style.visibility = 'hidden';
             document.getElementById('bossAura').classList.remove('on');
             document.getElementById('fighterMove').classList.remove('inv-blink');
             document.getElementById('fighterMove').setAttribute('transform', 'translate(0 0)');
@@ -2322,14 +2469,29 @@
             updateXpUI();
             updateUltUI();
             updateUltBarUI();
+            updateRageUI();
             document.getElementById('startBtn').textContent = '⚔️ 战斗中…';
             document.getElementById('startBtn').disabled = true;
+            if (difficulty === 'tutorial') {
+                // 🎓 新手教学：跳过小怪，直接教学 Boss
+                phase = 'boss';
+                minions = [];
+                document.querySelectorAll('.minion').forEach(m => { m.style.display = 'none'; });
+                teachStep = 0;
+                spawnBoss();
+                teachShow();
+                log('🎓 新手教学开始！跟着提示一步步学 —— ' + TEACH_STEPS[0]);
+                return;
+            }
             log('⚔️ 战斗开始！三只岩甲兽冲了过来，用 ' + ELEMENTS[ele].icon + ' 的力量打倒它们！');
         }
 
         function endFight(win) {
             gameOver = true;
             fighting = false;
+            // 🎓 教程结束：清理教学提示与按键高亮
+            teachStep = -1;
+            teachShow();
             document.getElementById('startBtn').disabled = false;
             if (win) {
                 fightWins++;
@@ -2364,6 +2526,7 @@
             if (k === 'j') { doAttack(); }
             if (k === 'k') { doUlt(); }
             if (k === 'l') { doUltimate(); }
+            if (k === 'r') { doRage(); }
         });
         document.addEventListener('keyup', e => {
             const k = e.key.toLowerCase();
@@ -2396,6 +2559,50 @@
                 fill.className = 'cd-fill';
                 btn.appendChild(fill);
             }
+        })();
+        (function makeStartBtnDraggable() {
+            const btn = document.getElementById('startBtn');
+            const arena = document.querySelector('.arena');
+            if (!btn || !arena) { return; }
+            let dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+            btn.addEventListener('pointerdown', (e) => {
+                dragging = true; moved = false;
+                const r = arena.getBoundingClientRect();
+                const b = btn.getBoundingClientRect();
+                ox = b.left - r.left; oy = b.top - r.top;
+                sx = e.clientX; sy = e.clientY;
+                btn.style.left = ox + 'px';
+                btn.style.top = oy + 'px';
+                btn.style.right = 'auto';
+                btn.style.cursor = 'grabbing';
+                try { btn.setPointerCapture(e.pointerId); } catch (err) {}
+                e.preventDefault();
+            });
+            btn.addEventListener('pointermove', (e) => {
+                if (!dragging) { return; }
+                const dx = e.clientX - sx, dy = e.clientY - sy;
+                if (Math.abs(dx) > 5 || Math.abs(dy) > 5) { moved = true; }
+                const r = arena.getBoundingClientRect();
+                const bw = btn.offsetWidth, bh = btn.offsetHeight;
+                const nx = Math.max(2, Math.min(r.width - bw - 2, ox + dx));
+                const ny = Math.max(2, Math.min(r.height - bh - 2, oy + dy));
+                btn.style.left = nx + 'px';
+                btn.style.top = ny + 'px';
+            });
+            const stop = () => {
+                if (!dragging) { return; }
+                dragging = false;
+                btn.style.cursor = 'grab';
+            };
+            btn.addEventListener('pointerup', stop);
+            btn.addEventListener('pointercancel', stop);
+            // 拖动后不触发「开始战斗」点击
+            btn.addEventListener('click', (e) => {
+                if (moved) {
+                    e.stopPropagation();
+                    moved = false;
+                }
+            }, true);
         })();
         requestAnimationFrame(t => { lastT = t; rafId = requestAnimationFrame(gameLoop); });
 
